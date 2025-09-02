@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Yazılım Blog</string>
+    <string name="title_blog">Blog</string>
+    <string name="title_yardim">Tartışma</string>
+    <string name="title_hesap">Hesap</string>
+</resources>
