@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\HP\\AndroidStudioProjects\\YazlmBlog\\yazilimblogdb\\YazilimBlogDB.csproj": {}
+    "C:\\Users\\HP\\AndroidStudioProjects\\YazlmBlog\\YazilimBlogDB\\YazilimBlogDB.csproj": {}
   },
   "projects": {
-    "C:\\Users\\HP\\AndroidStudioProjects\\YazlmBlog\\yazilimblogdb\\YazilimBlogDB.csproj": {
+    "C:\\Users\\HP\\AndroidStudioProjects\\YazlmBlog\\YazilimBlogDB\\YazilimBlogDB.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\HP\\AndroidStudioProjects\\YazlmBlog\\yazilimblogdb\\YazilimBlogDB.csproj",
+        "projectUniqueName": "C:\\Users\\HP\\AndroidStudioProjects\\YazlmBlog\\YazilimBlogDB\\YazilimBlogDB.csproj",
         "projectName": "YazilimBlogDB",
-        "projectPath": "C:\\Users\\HP\\AndroidStudioProjects\\YazlmBlog\\yazilimblogdb\\YazilimBlogDB.csproj",
+        "projectPath": "C:\\Users\\HP\\AndroidStudioProjects\\YazlmBlog\\YazilimBlogDB\\YazilimBlogDB.csproj",
         "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\HP\\AndroidStudioProjects\\YazlmBlog\\yazilimblogdb\\obj\\",
+        "outputPath": "C:\\Users\\HP\\AndroidStudioProjects\\YazlmBlog\\YazilimBlogDB\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

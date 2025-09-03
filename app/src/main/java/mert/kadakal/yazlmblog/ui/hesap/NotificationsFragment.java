@@ -1,10 +1,16 @@
 package mert.kadakal.yazlmblog.ui.hesap;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
@@ -14,9 +20,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -27,21 +35,31 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
+
 import mert.kadakal.yazlmblog.R;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import mert.kadakal.yazlmblog.api.ApiClient;
 import mert.kadakal.yazlmblog.api.ApiService;
 import mert.kadakal.yazlmblog.api.Kullanici;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class NotificationsFragment extends Fragment {
+    View view;
     Button mail;
     Button kaydol;
     Button giris;
@@ -52,12 +70,14 @@ public class NotificationsFragment extends Fragment {
     Call<List<Kullanici>> call = apiService.getKullanicilar();
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    //String sunucuKok = "13.60.84.136/yazilimBlog";
+    //private static final int PICK_IMAGE_REQUEST = 1;
 
     @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_notifications, container, false);
+        view = inflater.inflate(R.layout.fragment_notifications, container, false);
         sharedPreferences = getContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         int userid = sharedPreferences.getInt("userid", -1);
