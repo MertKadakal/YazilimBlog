@@ -16,6 +16,7 @@ public class Kullanici
     public int id { get; set; }
     public string kayit_yontem { get; set; }
     public string kullanici_adi { get; set; }
+    public string? parola { get; set; }
     public string kayit_tarihi { get; set; }
     public string? mail { get; set; }
     public string? tel { get; set; }

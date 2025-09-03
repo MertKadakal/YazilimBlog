@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("YazilimBlogDB")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab0dedc3c482a926cc2c94effaa315ed00f610ad")]
 [assembly: System.Reflection.AssemblyProductAttribute("YazilimBlogDB")]
 [assembly: System.Reflection.AssemblyTitleAttribute("YazilimBlogDB")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

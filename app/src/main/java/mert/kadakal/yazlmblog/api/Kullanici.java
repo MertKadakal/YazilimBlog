@@ -22,6 +22,11 @@ public class Kullanici {
     @SerializedName("tel")
     private String tel;
 
+
+
+    @SerializedName("parola")
+    private String parola;
+
     // Getter ve Setter metodları
 
 
@@ -47,4 +52,11 @@ public class Kullanici {
 
     public String getTel() { return tel; }
     public void setTel(String tel) { this.tel = tel; }
+
+    public String getParola() {
+        return parola;
+    }
+    public void setParola(String parola) {
+        this.parola = parola;
+    }
 }
