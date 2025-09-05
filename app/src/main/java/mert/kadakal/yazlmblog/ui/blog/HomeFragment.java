@@ -1,11 +1,16 @@
 package mert.kadakal.yazlmblog.ui.blog;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -15,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import mert.kadakal.yazlmblog.R;
 import mert.kadakal.yazlmblog.api.ApiClient;
@@ -30,36 +36,30 @@ public class HomeFragment extends Fragment {
 
     private View view;
     ApiService apiService = ApiClient.getClient().create(ApiService.class);
+    Button blog_ekle;
+    List<Blog> blogList;
+    BlogAdapter adapter;
+    SharedPreferences sharedPreferences;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_home, container, false);
+        blog_ekle = view.findViewById(R.id.blog_ekle);
+        sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
-        // 1. ListView ve Adapter tanımı
         ListView listView = view.findViewById(R.id.listView); // XML'deki ListView id'si
-        List<String> metinList = new ArrayList<>();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                getContext(),
-                R.layout.blog_list_item,
-                R.id.text1,
-                metinList
-        );
+        blogList = new ArrayList<>();
+        adapter = new BlogAdapter(getContext(), blogList);
         listView.setAdapter(adapter);
 
-// 2. API çağrısı
         Call<List<Blog>> call = apiService.getBloglar();
         call.enqueue(new Callback<List<Blog>>() {
             @Override
             public void onResponse(Call<List<Blog>> call, Response<List<Blog>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-
-                    for (Blog k : response.body()) {
-                        metinList.add("\n\n\n\n"+k.getMetin()); // her Kullanici'nun metin alanını ekle
-                        Log.d("aa", k.getMetin());
-                    }
-
-
-                    adapter.notifyDataSetChanged(); // listeyi güncelle
+                    blogList.clear();
+                    blogList.addAll(response.body());
+                    adapter.notifyDataSetChanged();
                 }
             }
 
@@ -69,6 +69,24 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
+            Blog secilenBlog = blogList.get(position);
+            Intent intent = new Intent(getContext(), BlogEkran.class);
+            intent.putExtra("blog_baslik", secilenBlog.getBaslik());
+            intent.putExtra("blog_ekleyen", String.valueOf(secilenBlog.getEkleyen_id()));
+            intent.putExtra("blog_metin", secilenBlog.getMetin());
+            intent.putExtra("blog_tarih", secilenBlog.getTarih());
+            intent.putExtra("blog_etiketler", secilenBlog.getEtiketler());
+            startActivity(intent);
+        });
+
+        blog_ekle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), BlogEkle.class);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
@@ -77,4 +95,38 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (sharedPreferences.getBoolean("blog_eklendi", false)) {
+            new AlertDialog.Builder(getContext())
+                    .setMessage("✅ Blog başarıyla eklendi! ✅")
+                    .setPositiveButton("Tamam", null)
+                    .show();
+
+            sharedPreferences.edit()
+                    .putBoolean("blog_eklendi", false)
+                    .apply();
+        }
+
+        Call<List<Blog>> call = apiService.getBloglar();
+        call.enqueue(new Callback<List<Blog>>() {
+            @Override
+            public void onResponse(Call<List<Blog>> call, Response<List<Blog>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    blogList.clear();
+                    blogList.addAll(response.body());
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Blog>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
 }

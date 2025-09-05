@@ -30,6 +30,7 @@ public class Blog
     public string metin { get; set; }
     public string tarih { get; set; }
     public string baslik { get; set; }
+    public string? etiketler { get; set; }
 }
 
 

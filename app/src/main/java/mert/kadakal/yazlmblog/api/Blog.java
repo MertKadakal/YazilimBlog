@@ -19,6 +19,9 @@ public class Blog {
     @SerializedName("baslik")
     private String baslik;
 
+    @SerializedName("etiketler")
+    private String etiketler;
+
     public int getId() {
         return id;
     }
@@ -57,5 +60,13 @@ public class Blog {
 
     public void setBaslik(String baslik) {
         this.baslik = baslik;
+    }
+
+    public String getEtiketler() {
+        return etiketler;
+    }
+
+    public void setEtiketler(String etiketler) {
+        this.etiketler = etiketler;
     }
 }

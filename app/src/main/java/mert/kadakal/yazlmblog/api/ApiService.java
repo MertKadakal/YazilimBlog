@@ -28,5 +28,8 @@ public interface ApiService {
     //bloglar
     @GET("api/Blog")
     Call<List<Blog>> getBloglar();
+
+    @POST("api/Blog")
+    Call<Blog> addBlog(@Body Blog yeniBlog);
 }
 

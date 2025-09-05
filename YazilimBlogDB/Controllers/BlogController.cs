@@ -22,5 +22,14 @@ namespace YazilimBlog.Controllers
         {
             return await _context.Bloglar.ToListAsync();
         }
+
+        [HttpPost]
+        public async Task<ActionResult<Blog>> AddBlog(Blog yeniBlog)
+        {
+            _context.Bloglar.Add(yeniBlog);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetBloglar), new { id = yeniBlog.id }, yeniBlog);
+        }
     }
 }
