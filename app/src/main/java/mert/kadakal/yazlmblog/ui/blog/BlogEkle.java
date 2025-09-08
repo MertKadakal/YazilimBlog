@@ -2,6 +2,7 @@ package mert.kadakal.yazlmblog.ui.blog;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,14 +18,15 @@ import androidx.cardview.widget.CardView;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import mert.kadakal.yazlmblog.R;
 import mert.kadakal.yazlmblog.api.ApiClient;
 import mert.kadakal.yazlmblog.api.ApiService;
 import mert.kadakal.yazlmblog.api.Blog;
-import mert.kadakal.yazlmblog.api.Kullanici;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,6 +54,28 @@ public class BlogEkle extends AppCompatActivity {
         // Activity seviyesinde bir map tanımla, tüm seçimleri burada tutacağız
         Map<String, Boolean> secimDurumuGlobal = new HashMap<>();
 
+        // Kartları map'e ekle, eğer global map'te yoksa false olarak ekle
+        if (!secimDurumuGlobal.containsKey("Eğitim")) secimDurumuGlobal.put("Eğitim", false);
+        if (!secimDurumuGlobal.containsKey("Oyun Geliştirme")) secimDurumuGlobal.put("Oyun Geliştirme", false);
+        if (!secimDurumuGlobal.containsKey("Web Geliştirme")) secimDurumuGlobal.put("Web Geliştirme", false);
+        if (!secimDurumuGlobal.containsKey("Yazılım Dilleri")) secimDurumuGlobal.put("Yazılım Dilleri", false);
+
+        if (getIntent().getStringExtra("blog_ekle_duzenle").equals("duzenle")) {
+            blog_baslik.setText(getIntent().getStringExtra("blog_baslik"));
+            blog_metin.setText(getIntent().getStringExtra("blog_metin"));
+            ekle.setText("Tamamla");
+
+            ArrayList<String> etiketlerList = new ArrayList<>(List.of("Yazılım Dilleri", "Oyun Geliştirme", "Web Geliştirme", "Eğitim"));
+            for (int i = 0; i < getIntent().getStringExtra("blog_etiketler").split(",").length; i++) {
+                Log.d("etiket", getIntent().getStringExtra("blog_etiketler").split(",")[i]);
+                secimDurumuGlobal.put(etiketlerList.get(i), false);
+                if (getIntent().getStringExtra("blog_etiketler").split(",")[i].equals("1")) {
+                    Log.d("etiket", "true");
+                    secimDurumuGlobal.put(etiketlerList.get(i), true);
+                }
+            }
+        }
+
 // Etiketler butonunun click'i
         etiketler.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,18 +94,14 @@ public class BlogEkle extends AppCompatActivity {
                 CardView card_web_gelistirme = popupView.findViewById(R.id.card_web_gelistirme);
                 CardView card_yazilim_dilleri = popupView.findViewById(R.id.card_yazilim_dilleri);
 
-                // Kartları map'e ekle, eğer global map'te yoksa false olarak ekle
-                if (!secimDurumuGlobal.containsKey("egitim")) secimDurumuGlobal.put("egitim", false);
-                if (!secimDurumuGlobal.containsKey("oyun")) secimDurumuGlobal.put("oyun", false);
-                if (!secimDurumuGlobal.containsKey("web")) secimDurumuGlobal.put("web", false);
-                if (!secimDurumuGlobal.containsKey("yazilim")) secimDurumuGlobal.put("yazilim", false);
+
 
                 // Kartları bir map ile eşle
                 Map<CardView, String> kartMap = new HashMap<>();
-                kartMap.put(card_egitim_hakkinda, "egitim");
-                kartMap.put(card_oyun_gelistirme, "oyun");
-                kartMap.put(card_web_gelistirme, "web");
-                kartMap.put(card_yazilim_dilleri, "yazilim");
+                kartMap.put(card_egitim_hakkinda, "Eğitim");
+                kartMap.put(card_oyun_gelistirme, "Oyun Geliştirme");
+                kartMap.put(card_web_gelistirme, "Web Geliştirme");
+                kartMap.put(card_yazilim_dilleri, "Yazılım Dilleri");
 
                 // Açılırken renkleri güncelle
                 for (Map.Entry<CardView, String> entry : kartMap.entrySet()) {
@@ -130,32 +150,53 @@ public class BlogEkle extends AppCompatActivity {
                     return;
                 }
 
-                LocalDate today = null;
-                DateTimeFormatter formatter = null;
-                String formattedDate = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                    today = LocalDate.now();
-                    formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                    formattedDate = today.format(formatter);
-                }
+                if (ekle.getText().toString().equals("Ekle")) {
+                    LocalDate today = null;
+                    DateTimeFormatter formatter = null;
+                    String formattedDate = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        today = LocalDate.now();
+                        formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                        formattedDate = today.format(formatter);
+                    }
 
-                StringBuilder sb = new StringBuilder();
-                for (Boolean secim : secimDurumuGlobal.values()) {
-                    sb.append(secim ? "1" : "0").append(",");
-                }
-                if (sb.length() > 0) {
-                    sb.setLength(sb.length() - 1);
-                }
-                String etiketler = sb.toString();
+                    StringBuilder sb = new StringBuilder();
+                    for (Boolean secim : secimDurumuGlobal.values()) {
+                        sb.append(secim ? "1" : "0").append(",");
+                    }
+                    if (sb.length() > 0) {
+                        sb.setLength(sb.length() - 1);
+                    }
+                    String etiketler = sb.toString();
 
-                Blog yeniBlog = new Blog();
-                yeniBlog.setEkleyen_id(sharedPreferences.getInt("userid", -1));
-                yeniBlog.setMetin(blog_metin.getText().toString());
-                yeniBlog.setBaslik(blog_baslik.getText().toString());
-                yeniBlog.setTarih(formattedDate);
-                yeniBlog.setEtiketler(etiketler);
+                    Blog yeniBlog = new Blog();
+                    yeniBlog.setEkleyen_id(sharedPreferences.getInt("userid", -1));
+                    yeniBlog.setMetin(blog_metin.getText().toString());
+                    yeniBlog.setBaslik(blog_baslik.getText().toString());
+                    yeniBlog.setTarih(formattedDate);
+                    yeniBlog.setEtiketler(etiketler);
 
-                blogEkle(yeniBlog);
+                    blogEkle(yeniBlog);
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    for (Boolean secim : secimDurumuGlobal.values()) {
+                        sb.append(secim ? "1" : "0").append(",");
+                    }
+                    if (sb.length() > 0) {
+                        sb.setLength(sb.length() - 1);
+                    }
+                    String etiketler = sb.toString();
+
+                    Blog yeniBlog = new Blog();
+                    yeniBlog.setEkleyen_id(sharedPreferences.getInt("userid", -1));
+                    yeniBlog.setMetin(blog_metin.getText().toString());
+                    yeniBlog.setBaslik(blog_baslik.getText().toString());
+                    yeniBlog.setTarih(getIntent().getStringExtra("blog_tarih") + " (Güncellendi)");
+                    yeniBlog.setId(getIntent().getIntExtra("blog_id", -1));
+                    yeniBlog.setEtiketler(etiketler);
+
+                    blogGuncelle(yeniBlog);
+                }
             }
         });
     }
@@ -169,6 +210,44 @@ public class BlogEkle extends AppCompatActivity {
                     sharedPreferences.edit()
                             .putBoolean("blog_eklendi", true)
                             .apply();
+
+                    onBackPressed();
+                } else {
+                    try {
+                        String errorJson = response.errorBody().string(); // errorBody string olarak al
+                        Log.e("API", "Hata: " + response.code() + " - " + errorJson);
+                    } catch (Exception e) {
+                        Log.e("API", "Hata body okunamadı", e);
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<Blog> call, Throwable t) {
+                Log.e("API", "İstek başarısız: " + t.getMessage());
+            }
+        });
+    }
+
+    private void blogGuncelle(Blog yeniBlog) {
+        Call<Blog> call = apiService.updateBlog(yeniBlog);
+        call.enqueue(new Callback<Blog>() {
+            @Override
+            public void onResponse(Call<Blog> call, Response<Blog> response) {
+                if (response.isSuccessful()) {
+                    sharedPreferences.edit()
+                            .putBoolean("blog_guncellendi", true)
+                            .putBoolean("blog_guncellendi_hesap", true)
+                            .apply();
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                    editor.putString("blog_baslik", yeniBlog.getBaslik());
+                    editor.putString("blog_ekleyen", String.valueOf(yeniBlog.getEkleyen_id()));
+                    editor.putString("blog_metin", yeniBlog.getMetin());
+                    editor.putString("blog_tarih", yeniBlog.getTarih());
+                    editor.putString("blog_etiketler", yeniBlog.getEtiketler());
+                    editor.putInt("blog_id", yeniBlog.getId());
+                    editor.apply(); // verileri kaydet
 
                     onBackPressed();
                 } else {

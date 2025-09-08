@@ -1,7 +1,6 @@
 package mert.kadakal.yazlmblog.ui.blog;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import mert.kadakal.yazlmblog.R;
@@ -20,7 +20,7 @@ import mert.kadakal.yazlmblog.api.ApiClient;
 import mert.kadakal.yazlmblog.api.ApiService;
 import mert.kadakal.yazlmblog.api.Blog;
 import mert.kadakal.yazlmblog.api.Kullanici;
-import mert.kadakal.yazlmblog.ui.hesap.EmailCheckResult;
+import mert.kadakal.yazlmblog.api.Yorum;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -64,13 +64,30 @@ public class BlogAdapter extends ArrayAdapter<Blog> {
         }
         textEtiketler.setText(sb.toString().isEmpty() ? "Etiket girilmemiş" : sb.toString());
 
-        getKullanicilar(kullanicilar -> {
-            for (Kullanici k : kullanicilar) {
-                if (k.getId() == blog.getEkleyen_id()) {
-                    textTarih.setText("Tarih: "+blog.getTarih() + "\nYazar: " + k.getKullanici_adi());
+        getYorumlar(yorumlar -> {
+            double total = 0;
+            double count = 0;
+            for (Yorum yorum : yorumlar) {
+                if (yorum.getEklenen_blog() == blog.getId()) {
+                    count++;
+                    total += yorum.getPuan();
                 }
             }
+
+            double avg = count == 0 ? 0 : total / count;
+
+            double finalCount = count;
+            getKullanicilar(kullanicilar -> {
+                for (Kullanici k : kullanicilar) {
+                    if (k.getId() == blog.getEkleyen_id()) {
+                        String ek = finalCount == 0 ? "\nHenüz puanlanmamış" : "\nOrtalama Puan: " + avg + "/10";
+                        textTarih.setText("Tarih: " + blog.getTarih() + "\nYazar: " + k.getKullanici_adi() + ek);
+                    }
+                }
+            });
         });
+
+
 
         return convertView;
     }
@@ -89,6 +106,26 @@ public class BlogAdapter extends ArrayAdapter<Blog> {
 
             @Override
             public void onFailure(Call<List<Kullanici>> call, Throwable t) {
+                t.printStackTrace();
+                callback.accept(new ArrayList<>()); // hata olursa boş liste dön
+            }
+        });
+    }
+
+    private void getYorumlar(Consumer<List<Yorum>> callback) {
+        Call<List<Yorum>> call = apiService.getYorumlar(); // her seferinde yeni Call oluştur
+        call.enqueue(new Callback<List<Yorum>>() {
+            @Override
+            public void onResponse(Call<List<Yorum>> call, Response<List<Yorum>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.accept(new ArrayList<>(response.body()));
+                } else {
+                    callback.accept(new ArrayList<>()); // boş liste dön
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Yorum>> call, Throwable t) {
                 t.printStackTrace();
                 callback.accept(new ArrayList<>()); // hata olursa boş liste dön
             }

@@ -69,6 +69,8 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
+
         listView.setOnItemClickListener((parent, view1, position, id) -> {
             Blog secilenBlog = blogList.get(position);
             Intent intent = new Intent(getContext(), BlogEkran.class);
@@ -77,6 +79,7 @@ public class HomeFragment extends Fragment {
             intent.putExtra("blog_metin", secilenBlog.getMetin());
             intent.putExtra("blog_tarih", secilenBlog.getTarih());
             intent.putExtra("blog_etiketler", secilenBlog.getEtiketler());
+            intent.putExtra("blog_id", secilenBlog.getId());
             startActivity(intent);
         });
 
@@ -84,6 +87,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), BlogEkle.class);
+                intent.putExtra("blog_ekle_duzenle", "ekle");
                 startActivity(intent);
             }
         });
@@ -108,6 +112,17 @@ public class HomeFragment extends Fragment {
 
             sharedPreferences.edit()
                     .putBoolean("blog_eklendi", false)
+                    .apply();
+        }
+
+        if (sharedPreferences.getBoolean("blog_silindi", false)) {
+            new AlertDialog.Builder(getContext())
+                    .setMessage("✅ Blog başarıyla silindi! ✅")
+                    .setPositiveButton("Tamam", null)
+                    .show();
+
+            sharedPreferences.edit()
+                    .putBoolean("blog_silindi", false)
                     .apply();
         }
 

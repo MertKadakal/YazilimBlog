@@ -46,5 +46,31 @@ namespace YazilimBlog.Controllers
 
             return NoContent();
         }
+
+        // PUT: api/kullanici
+        [HttpPut]
+        public async Task<IActionResult> UpdateKullanici([FromBody] Kullanici updatedKullanici)
+        {
+            if (updatedKullanici == null || updatedKullanici.id == 0)
+                return BadRequest("Geçersiz kullanıcı verisi.");
+
+            var kullanici = await _context.Kullanicilar.FindAsync(updatedKullanici.id);
+            if (kullanici == null)
+                return NotFound();
+
+            // Alanları güncelle
+            kullanici.kayit_yontem = updatedKullanici.kayit_yontem;
+            kullanici.kullanici_adi = updatedKullanici.kullanici_adi;
+            kullanici.parola = updatedKullanici.parola;
+            kullanici.kayit_tarihi = updatedKullanici.kayit_tarihi;
+            kullanici.mail = updatedKullanici.mail;
+            kullanici.tel = updatedKullanici.tel;
+
+            _context.Kullanicilar.Update(kullanici);
+            await _context.SaveChangesAsync();
+
+            return Ok(kullanici);
+        }
+
     }
 }

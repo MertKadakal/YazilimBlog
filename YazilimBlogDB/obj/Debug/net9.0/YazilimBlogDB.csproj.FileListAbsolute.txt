@@ -330,3 +330,15 @@ C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\obj\Debug\net9.0\Yazil
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\obj\Debug\net9.0\YazilimBlogDB.genruntimeconfig.cache
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\obj\Debug\net9.0\ref\YazilimBlogDB.dll
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\obj\Debug\net9.0\YazilimBlogDB.sourcelink.json
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\bin\Debug\net9.0\publish\publish\web.config
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\bin\Debug\net9.0\publish\web.config
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\bin\Debug\net9.0\publish\appsettings.Development.json
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\bin\Debug\net9.0\publish\appsettings.json
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\bin\Debug\net9.0\publish\publish\appsettings.Development.json
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\bin\Debug\net9.0\publish\publish\appsettings.json
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\bin\Debug\net9.0\publish\publish\YazilimBlogDB.deps.json
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\bin\Debug\net9.0\publish\publish\YazilimBlogDB.runtimeconfig.json
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\bin\Debug\net9.0\publish\publish\YazilimBlogDB.staticwebassets.endpoints.json
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\bin\Debug\net9.0\publish\YazilimBlogDB.deps.json
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\bin\Debug\net9.0\publish\YazilimBlogDB.runtimeconfig.json
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\yazilimblogdb\bin\Debug\net9.0\publish\YazilimBlogDB.staticwebassets.endpoints.json

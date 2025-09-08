@@ -21,6 +21,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:visibility="visible"
         >
 
 
@@ -35,24 +36,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/giris"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:background="@drawable/block_background"
                 android:text="Giriş"
+                android:textAllCaps="false"
                 android:layout_marginBottom="10dp"
                 >
-            </Button>
+            </androidx.appcompat.widget.AppCompatButton>
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/kaydol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:textAllCaps="false"
+                android:background="@drawable/block_background"
                 android:text="Kaydol"
                 >
-            </Button>
+            </androidx.appcompat.widget.AppCompatButton>
         </LinearLayout>
 
         <LinearLayout
@@ -67,15 +70,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/mail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:textAllCaps="false"
+                android:background="@drawable/block_background"
                 android:text="Mail kullan"
                 >
-            </Button>
-</LinearLayout>
+            </androidx.appcompat.widget.AppCompatButton>
+        </LinearLayout>
 
 
     </LinearLayout>
@@ -83,58 +87,130 @@
     <LinearLayout
         android:id="@+id/hesap_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:visibility="visible">
+        android:visibility="visible"
+        android:padding="10dp"
+        android:layout_marginBottom="50dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/hesap_card_bg"
+            android:padding="10dp">
 
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/hesap">
-        </ImageView>
+            <!-- Sol kısım: ImageView + TextView -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/hesap"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="230dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/hesap_isim"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="25dp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="5dp"
+                        android:text="Hesap ismi" />
+
+                    <TextView
+                        android:id="@+id/hesap_kaydolmatarihi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="kaydolma tarihi"
+                        android:textStyle="italic" />
+
+                    <TextView
+                        android:id="@+id/hesap_toplamblog"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="toplam blog" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Boşluk ekleyerek sağa itilmesini sağla -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Sağdaki buton -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+                <TextView
+                    android:id="@+id/ayarlar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚙️"
+                    android:layout_gravity="center"
+                    android:textSize="30dp">
+
+                </TextView>
+
+                <TextView
+                    android:id="@+id/cikis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⛔"
+                    android:layout_marginTop="10dp"
+                    android:padding="5dp"
+                    android:textSize="20dp">
+
+                </TextView>
+            </LinearLayout>
+        </LinearLayout>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hesap">
-
+            android:text="Yayınlanmış Bloglarım"
+            android:textSize="20dp"
+            android:paddingLeft="10dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:textColor="@color/black">
         </TextView>
 
-        <Button
-            android:id="@+id/cikis"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Çıkış">
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"
+            android:layout_marginVertical="4dp" />
 
-        </Button>
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ListView>
 
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/secenekler_layout" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
