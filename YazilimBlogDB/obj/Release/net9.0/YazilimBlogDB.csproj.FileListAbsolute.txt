@@ -164,9 +164,5 @@ C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\obj\Release\net9.0\ref
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\obj\Release\net9.0\YazilimBlogDB.pdb
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\obj\Release\net9.0\YazilimBlogDB.genruntimeconfig.cache
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\obj\Release\net9.0\ref\YazilimBlogDB.dll
-C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\bin\Release\net9.0\publish\web.config
-C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\bin\Release\net9.0\publish\appsettings.Development.json
-C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\bin\Release\net9.0\publish\appsettings.json
-C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\bin\Release\net9.0\publish\YazilimBlogDB.deps.json
-C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\bin\Release\net9.0\publish\YazilimBlogDB.runtimeconfig.json
-C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\bin\Release\net9.0\publish\YazilimBlogDB.staticwebassets.endpoints.json
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\bin\Release\net9.0\MySqlConnector.dll
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\bin\Release\net9.0\Pomelo.EntityFrameworkCore.MySql.dll

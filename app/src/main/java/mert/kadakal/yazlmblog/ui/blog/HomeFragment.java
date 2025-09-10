@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -46,6 +47,8 @@ public class HomeFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_home, container, false);
         blog_ekle = view.findViewById(R.id.blog_ekle);
         sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
 
         ListView listView = view.findViewById(R.id.listView); // XML'deki ListView id'si
         blogList = new ArrayList<>();
@@ -56,11 +59,14 @@ public class HomeFragment extends Fragment {
         call.enqueue(new Callback<List<Blog>>() {
             @Override
             public void onResponse(Call<List<Blog>> call, Response<List<Blog>> response) {
+                Log.d("api", "bağlanıyor");
                 if (response.isSuccessful() && response.body() != null) {
+                    Log.d("api", "bağlandı - " + response.body().size());
                     blogList.clear();
                     blogList.addAll(response.body());
                     adapter.notifyDataSetChanged();
                 }
+                Log.d("api", String.valueOf(blogList.size()));
             }
 
             @Override

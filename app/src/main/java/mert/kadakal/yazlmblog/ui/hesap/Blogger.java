@@ -1,7 +1,9 @@
 package mert.kadakal.yazlmblog.ui.hesap;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
@@ -44,6 +46,7 @@ public class Blogger extends AppCompatActivity {
     ImageView blog_yok;
     TextView sikayet;
     TextView info;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,6 +55,7 @@ public class Blogger extends AppCompatActivity {
 
         int blogger_id = getIntent().getIntExtra("blogger_id", -1);
 
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         hesap_ismi = findViewById(R.id.hesap_isim);
         hesap_kaydolma = findViewById(R.id.hesap_kaydolmatarihi);
         hesap_total = findViewById(R.id.hesap_toplamblog);
@@ -147,6 +151,7 @@ public class Blogger extends AppCompatActivity {
                             sikayet.setAciklama(aciklama);
                             sikayet.setHesap_id(blogger_id);
                             sikayet.setTarih(formattedDate);
+                            sikayet.setEden_id(sharedPreferences.getInt("userid",-1));
 
                             Call<Sikayet> call2 = apiService.addSikayet(sikayet);
                             call2.enqueue(new Callback<Sikayet>() {

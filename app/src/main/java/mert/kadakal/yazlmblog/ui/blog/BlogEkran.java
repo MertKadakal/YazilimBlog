@@ -51,6 +51,7 @@ public class BlogEkran extends AppCompatActivity {
     TextView metin;
     TextView etiketler;
     TextView secenekler;
+    TextView yorum_kaydir_text;
     TextView yorum_yok_text;
     View bottomSheet;
     SharedPreferences sharedPreferences;
@@ -62,6 +63,7 @@ public class BlogEkran extends AppCompatActivity {
         Intent intent = getIntent();
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
+        yorum_kaydir_text = findViewById(R.id.yorum_kaydir_text);
         baslik = findViewById(R.id.blog_baslik);
         baslik.setText(intent.getStringExtra("blog_baslik"));
         metin = findViewById(R.id.blog_metin);
@@ -83,6 +85,8 @@ public class BlogEkran extends AppCompatActivity {
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 switch (newState) {
                     case BottomSheetBehavior.STATE_EXPANDED:
+                        yorum_kaydir_text.setText("Yorum eklemek için sağ üstteki üç çizgiye basın");
+
                         Call<List<Yorum>> call = apiService.getYorumlar();
                         call.enqueue(new Callback<List<Yorum>>() {
                             @Override
@@ -144,6 +148,7 @@ public class BlogEkran extends AppCompatActivity {
                                                         }
 
                                                         Sikayet sikayet = new Sikayet();
+                                                        sikayet.setEden_id(sharedPreferences.getInt("userid", -1));
                                                         sikayet.setYorum_id(yorumList.get(position).getId());
                                                         sikayet.setAciklama(aciklama);
                                                         sikayet.setTarih(formattedDate);
@@ -202,7 +207,7 @@ public class BlogEkran extends AppCompatActivity {
                         });
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
-                        // Kapalı
+                        yorum_kaydir_text.setText("Yorumları görmek için yukarı kaydırın");
                         break;
                 }
             }
@@ -292,6 +297,7 @@ public class BlogEkran extends AppCompatActivity {
                                     sikayet.setAciklama(aciklama);
                                     sikayet.setBlog_id(intent.getIntExtra("blog_id", -1));
                                     sikayet.setTarih(formattedDate);
+                                    sikayet.setEden_id(sharedPreferences.getInt("userid", -1));
 
                                     Call<Sikayet> call2 = apiService.addSikayet(sikayet);
                                     call2.enqueue(new Callback<Sikayet>() {
@@ -364,6 +370,7 @@ public class BlogEkran extends AppCompatActivity {
                             final int puan = i;
                             TextView tv = new TextView(this);
                             tv.setText(String.valueOf(i));
+                            tv.setTextColor(Color.WHITE);
                             tv.setTextSize(13f);
                             tv.setPadding(10, 10, 10, 10);
                             tv.setBackgroundResource(R.drawable.block_background);

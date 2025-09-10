@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <!-- Arka plan rengi -->
-    <solid android:color="@android:color/white" />
+    <solid android:color="@color/bottom_nav" />
 
     <!-- Kenarlık -->
     <stroke

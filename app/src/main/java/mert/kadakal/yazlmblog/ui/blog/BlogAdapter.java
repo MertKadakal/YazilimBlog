@@ -64,6 +64,10 @@ public class BlogAdapter extends ArrayAdapter<Blog> {
         }
         textEtiketler.setText(sb.toString().isEmpty() ? "Etiket girilmemiş" : sb.toString());
 
+        double kelimeSayisi = blog.getMetin().trim().split(" ").length;
+        double okumaSuresiDk = kelimeSayisi / 225;
+        double yuvarlanmis = Math.ceil(okumaSuresiDk * 10) / 10;
+
         getYorumlar(yorumlar -> {
             double total = 0;
             double count = 0;
@@ -77,11 +81,12 @@ public class BlogAdapter extends ArrayAdapter<Blog> {
             double avg = count == 0 ? 0 : total / count;
 
             double finalCount = count;
+            double finalCount1 = count;
             getKullanicilar(kullanicilar -> {
                 for (Kullanici k : kullanicilar) {
                     if (k.getId() == blog.getEkleyen_id()) {
-                        String ek = finalCount == 0 ? "\nHenüz puanlanmamış" : "\nOrtalama Puan: " + avg + "/10";
-                        textTarih.setText("Tarih: " + blog.getTarih() + "\nYazar: " + k.getKullanici_adi() + ek);
+                        String ek = finalCount == 0 ? "\nHenüz puanlanmamış" : "\nOrtalama Puan: " + avg + "/10 (" + (int)finalCount1 + " değerlendirme)";
+                        textTarih.setText("Tarih: " + blog.getTarih() + "\nYazar: " + k.getKullanici_adi() + ek + "\nOkuma Süresi: " + String.format("%.1f", yuvarlanmis) + " dakika");
                     }
                 }
             });

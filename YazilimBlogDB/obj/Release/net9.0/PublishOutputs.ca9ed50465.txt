@@ -1,12 +1,6 @@
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\YazilimBlogDB.exe
-C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\publish\web.config
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\appsettings.Development.json
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\appsettings.json
-C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\publish\appsettings.Development.json
-C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\publish\appsettings.json
-C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\publish\YazilimBlogDB.deps.json
-C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\publish\YazilimBlogDB.runtimeconfig.json
-C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\publish\YazilimBlogDB.staticwebassets.endpoints.json
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\YazilimBlogDB.dll
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\YazilimBlogDB.runtimeconfig.json
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\YazilimBlogDB.pdb
@@ -39,6 +33,8 @@ C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\Microsoft.Iden
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\Microsoft.OpenApi.dll
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\Microsoft.SqlServer.Server.dll
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\Microsoft.Win32.SystemEvents.dll
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\MySqlConnector.dll
+C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\Pomelo.EntityFrameworkCore.MySql.dll
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\HP\AndroidStudioProjects\YazlmBlog\YazilimBlogDB\publish\Swashbuckle.AspNetCore.SwaggerUI.dll
