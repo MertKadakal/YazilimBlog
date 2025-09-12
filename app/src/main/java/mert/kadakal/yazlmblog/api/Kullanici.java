@@ -22,10 +22,11 @@ public class Kullanici {
     @SerializedName("tel")
     private String tel;
 
-
-
     @SerializedName("parola")
     private String parola;
+
+    @SerializedName("favoriler")
+    private String favoriler;
 
     // Getter ve Setter metodları
 
@@ -58,5 +59,13 @@ public class Kullanici {
     }
     public void setParola(String parola) {
         this.parola = parola;
+    }
+
+    public String getFavoriler() {
+        return favoriler;
+    }
+
+    public void setFavoriler(String favoriler) {
+        this.favoriler = favoriler;
     }
 }

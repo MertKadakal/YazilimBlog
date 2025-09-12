@@ -33,6 +33,7 @@ import android.widget.Toast;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -61,6 +62,8 @@ import java.util.function.Consumer;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import org.w3c.dom.Text;
+
 
 public class NotificationsFragment extends Fragment {
     View view;
@@ -72,6 +75,7 @@ public class NotificationsFragment extends Fragment {
     TextView hesap_kaydolma;
     TextView hesap_total;
     TextView ayarlar;
+    TextView favs;
     LinearLayout secenekler;
     LinearLayout hesap;
     ApiService apiService = ApiClient.getClient().create(ApiService.class);
@@ -79,6 +83,8 @@ public class NotificationsFragment extends Fragment {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     int totalBlog = 0;
+    private final List<AlertDialog> acikDialoglar = new ArrayList<>();
+
 
     ListView listView;
     ArrayList<Blog> blogList;
@@ -252,6 +258,7 @@ public class NotificationsFragment extends Fragment {
                                                                 yeniKullanici.setMail(yeniMail);
                                                                 yeniKullanici.setTel(k.getTel());
                                                                 yeniKullanici.setParola(k.getParola());
+                                                                yeniKullanici.setFavoriler(k.getFavoriler());
 
                                                                 Call<Kullanici> call = apiService.updateKullanici(yeniKullanici);
                                                                 call.enqueue(new Callback<Kullanici>() {
@@ -328,6 +335,7 @@ public class NotificationsFragment extends Fragment {
                                                                     yeniKullanici.setMail(k.getMail());
                                                                     yeniKullanici.setTel(telefon.getText().toString());
                                                                     yeniKullanici.setParola(k.getParola());
+                                                                    yeniKullanici.setFavoriler(k.getFavoriler());
 
                                                                     Call<Kullanici> call = apiService.updateKullanici(yeniKullanici);
                                                                     call.enqueue(new Callback<Kullanici>() {
@@ -380,6 +388,72 @@ public class NotificationsFragment extends Fragment {
             }
         }));
 
+        favs = view.findViewById(R.id.favs);
+        favs.setOnClickListener(view -> getKullanicilar(kullanicilar -> {
+            for (Kullanici k : kullanicilar) {
+                if (k.getId() == sharedPreferences.getInt("userid", -1)) {
+
+                    if (k.getFavoriler() == null || k.getFavoriler().isEmpty()) {
+                        Toast.makeText(getContext(), "Henüz favori blog yok", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    List<String> favs = Arrays.asList(k.getFavoriler().split(","));
+
+                    Call<List<Blog>> call = apiService.getBloglar();
+                    call.enqueue(new Callback<List<Blog>>() {
+                        @Override
+                        public void onResponse(Call<List<Blog>> call, Response<List<Blog>> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                List<Blog> favBloglar = new ArrayList<>();
+                                for (Blog blog : response.body()) {
+                                    if (favs.contains(String.valueOf(blog.getId()))) {
+                                        favBloglar.add(blog);
+                                    }
+                                }
+
+                                // Dialog ve ListView burada oluşturuluyor, veri hazır
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                LayoutInflater inflater1 = getLayoutInflater();
+                                View dialogView = inflater1.inflate(R.layout.filtre_list, null);
+                                TextView topText = dialogView.findViewById(R.id.dialog_title);
+                                topText.setText("Favorileriniz");
+
+                                builder.setView(dialogView);
+                                AlertDialog dialog = builder.create();
+
+                                ListView listView = dialogView.findViewById(R.id.dialog_list);
+                                BlogAdapter adapter = new BlogAdapter(getContext(), favBloglar);
+                                listView.setAdapter(adapter);
+
+                                listView.setOnItemClickListener((parent, view1, position, id) -> {
+                                    Blog secilenBlog = favBloglar.get(position);
+                                    Intent intent = new Intent(getContext(), BlogEkran.class);
+                                    intent.putExtra("blog_baslik", secilenBlog.getBaslik());
+                                    intent.putExtra("blog_ekleyen", String.valueOf(secilenBlog.getEkleyen_id()));
+                                    intent.putExtra("blog_metin", secilenBlog.getMetin());
+                                    intent.putExtra("blog_tarih", secilenBlog.getTarih());
+                                    intent.putExtra("blog_etiketler", secilenBlog.getEtiketler());
+                                    intent.putExtra("blog_id", secilenBlog.getId());
+                                    startActivity(intent);
+                                });
+
+                                acikDialoglar.add(dialog);
+                                dialog.show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Blog>> call, Throwable t) {
+                            t.printStackTrace();
+                            Toast.makeText(getContext(), "Favori bloglar yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    break; // Kullanıcı bulundu, döngüden çık
+                }
+            }
+        }));
 
         ekranGuncelle(userid);
 
@@ -558,6 +632,7 @@ public class NotificationsFragment extends Fragment {
                                     yeniKullanici.setMail(mail);
                                     yeniKullanici.setTel(null);
                                     yeniKullanici.setParola(null);
+                                    yeniKullanici.setFavoriler(null);
 
                                     kullaniciEkle(yeniKullanici);
                                 }
@@ -740,6 +815,7 @@ public class NotificationsFragment extends Fragment {
                             yeniKullanici.setMail(null);
                             yeniKullanici.setTel(null);
                             yeniKullanici.setParola(parola);
+                            yeniKullanici.setFavoriler(null);
 
                             kullaniciEkle(yeniKullanici);
                         }
@@ -786,7 +862,14 @@ public class NotificationsFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-
+        if (acikDialoglar.size() > 0) {
+            for (AlertDialog d : acikDialoglar) {
+                if (d.isShowing()) {
+                    d.dismiss();
+                }
+            }
+            favs.performClick();
+        }
 
 
         if (sharedPreferences.getBoolean("blog_silindi", false)) {

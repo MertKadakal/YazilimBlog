@@ -9,89 +9,41 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:layout_marginRight="5dp">
+        android:orientation="vertical">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_yazilim_dilleri"
+        <!-- Sabit text -->
+        <TextView
+            android:id="@+id/sabit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:clickable="true"
-            android:foreground="?attr/selectableItemBackground">
+            android:text="Etiketleri Seç"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="Yazılım Dilleri"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:gravity="center" />
-        </androidx.cardview.widget.CardView>
+        <!-- Kaydırılabilir liste -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_etiketler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_web_gelistirme"
+        <!-- Sabit buton -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/etiketleri_onayla"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardElevation="6dp">
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/block_background"
+            android:text="Filtrele"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="Web Geliştirme"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:gravity="center" />
-        </androidx.cardview.widget.CardView>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:layout_marginLeft="5dp">
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_oyun_gelistirme"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:clickable="true"
-            android:foreground="?attr/selectableItemBackground">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="Oyun Geliştirme"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:gravity="center" />
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_egitim_hakkinda"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardElevation="6dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="Eğitim"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:gravity="center" />
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
 
 </LinearLayout>

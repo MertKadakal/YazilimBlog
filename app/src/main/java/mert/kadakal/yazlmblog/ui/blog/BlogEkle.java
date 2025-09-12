@@ -11,10 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 import mert.kadakal.yazlmblog.R;
 import mert.kadakal.yazlmblog.api.ApiClient;
@@ -52,25 +56,74 @@ public class BlogEkle extends AppCompatActivity {
         blog_baslik = findViewById(R.id.blog_baslik);
 
         // Activity seviyesinde bir map tanımla, tüm seçimleri burada tutacağız
-        Map<String, Boolean> secimDurumuGlobal = new HashMap<>();
+        Map<String, Boolean> secimDurumuGlobal = new LinkedHashMap<>();
+        ArrayList<String> etiketlerList = new ArrayList<>(List.of(
+                "Yazılım Dilleri",
+                "Oyun Geliştirme",
+                "Web Geliştirme",
+                "Eğitim",
+                "Java",
+                "Python",
+                "C++",
+                "C#",
+                "JavaScript",
+                "Kotlin",
+                "Swift",
+                "Go",
+                "Rust",
+                "PHP",
+                "Ruby",
+                "TypeScript",
+                "Dart",
+                "R",
+                "Scala",
+                "Perl",
+                "HTML & CSS",
+                "Veri Yapıları",
+                "Algoritmalar",
+                "Yapay Zeka",
+                "Makine Öğrenmesi",
+                "Derin Öğrenme",
+                "Veri Bilimi",
+                "Siber Güvenlik",
+                "Blockchain",
+                "Mobil Geliştirme",
+                "Backend Geliştirme",
+                "Frontend Geliştirme",
+                "Fullstack Geliştirme",
+                "Bulut Bilişim",
+                "DevOps",
+                "Veritabanları",
+                "SQL",
+                "NoSQL",
+                "API Geliştirme",
+                "Mikroservisler",
+                "Agile & Scrum",
+                "Yazılım Testi",
+                "Unit Test",
+                "Clean Code",
+                "Design Patterns",
+                "OOP",
+                "Functional Programming",
+                "Versiyon Kontrol (Git)",
+                "Linux & Sistem Programlama"
+        ));
+
 
         // Kartları map'e ekle, eğer global map'te yoksa false olarak ekle
-        if (!secimDurumuGlobal.containsKey("Eğitim")) secimDurumuGlobal.put("Eğitim", false);
-        if (!secimDurumuGlobal.containsKey("Oyun Geliştirme")) secimDurumuGlobal.put("Oyun Geliştirme", false);
-        if (!secimDurumuGlobal.containsKey("Web Geliştirme")) secimDurumuGlobal.put("Web Geliştirme", false);
-        if (!secimDurumuGlobal.containsKey("Yazılım Dilleri")) secimDurumuGlobal.put("Yazılım Dilleri", false);
+        for (String etkt : etiketlerList) {
+            if (!secimDurumuGlobal.containsKey(etkt)) secimDurumuGlobal.put(etkt, false);
+        }
 
         if (getIntent().getStringExtra("blog_ekle_duzenle").equals("duzenle")) {
             blog_baslik.setText(getIntent().getStringExtra("blog_baslik"));
             blog_metin.setText(getIntent().getStringExtra("blog_metin"));
             ekle.setText("Tamamla");
 
-            ArrayList<String> etiketlerList = new ArrayList<>(List.of("Yazılım Dilleri", "Oyun Geliştirme", "Web Geliştirme", "Eğitim"));
             for (int i = 0; i < getIntent().getStringExtra("blog_etiketler").split(",").length; i++) {
                 Log.d("etiket", getIntent().getStringExtra("blog_etiketler").split(",")[i]);
                 secimDurumuGlobal.put(etiketlerList.get(i), false);
                 if (getIntent().getStringExtra("blog_etiketler").split(",")[i].equals("1")) {
-                    Log.d("etiket", "true");
                     secimDurumuGlobal.put(etiketlerList.get(i), true);
                 }
             }
@@ -89,51 +142,23 @@ public class BlogEkle extends AppCompatActivity {
 
                 dialog.show();
 
-                CardView card_egitim_hakkinda = popupView.findViewById(R.id.card_egitim_hakkinda);
-                CardView card_oyun_gelistirme = popupView.findViewById(R.id.card_oyun_gelistirme);
-                CardView card_web_gelistirme = popupView.findViewById(R.id.card_web_gelistirme);
-                CardView card_yazilim_dilleri = popupView.findViewById(R.id.card_yazilim_dilleri);
+                TextView sabitText = popupView.findViewById(R.id.sabit_text);
+                Button sabitButon = popupView.findViewById(R.id.etiketleri_onayla);
 
+                sabitText.setVisibility(View.GONE);
+                sabitButon.setVisibility(View.GONE);
 
+                RecyclerView recyclerEtiketler = popupView.findViewById(R.id.recycler_etiketler);
+                recyclerEtiketler.setLayoutManager(new LinearLayoutManager(BlogEkle.this));
 
-                // Kartları bir map ile eşle
-                Map<CardView, String> kartMap = new HashMap<>();
-                kartMap.put(card_egitim_hakkinda, "Eğitim");
-                kartMap.put(card_oyun_gelistirme, "Oyun Geliştirme");
-                kartMap.put(card_web_gelistirme, "Web Geliştirme");
-                kartMap.put(card_yazilim_dilleri, "Yazılım Dilleri");
-
-                // Açılırken renkleri güncelle
-                for (Map.Entry<CardView, String> entry : kartMap.entrySet()) {
-                    if (secimDurumuGlobal.get(entry.getValue())) {
-                        entry.getKey().setCardBackgroundColor(Color.parseColor("#4CAF50")); // yeşil
-                    } else {
-                        entry.getKey().setCardBackgroundColor(Color.WHITE);
-                    }
+                // Map başlangıçta false değerlerle dolsun
+                for (String e : etiketlerList) {
+                    secimDurumuGlobal.putIfAbsent(e, false);
                 }
 
-                // Ortak click listener
-                View.OnClickListener kartTiklamaListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        CardView kart = (CardView) view;
-                        String key = kartMap.get(kart);
-                        boolean secili = secimDurumuGlobal.get(key);
+                EtiketAdapter adapter = new EtiketAdapter(etiketlerList, secimDurumuGlobal);
+                recyclerEtiketler.setAdapter(adapter);
 
-                        if (!secili) {
-                            kart.setCardBackgroundColor(Color.parseColor("#4CAF50"));
-                            secimDurumuGlobal.put(key, true);
-                        } else {
-                            kart.setCardBackgroundColor(Color.WHITE);
-                            secimDurumuGlobal.put(key, false);
-                        }
-                    }
-                };
-
-                // Tüm kartlara listener ekle
-                for (CardView c : kartMap.keySet()) {
-                    c.setOnClickListener(kartTiklamaListener);
-                }
             }
         });
 
