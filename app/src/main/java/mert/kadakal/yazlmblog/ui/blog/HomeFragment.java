@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +46,7 @@ public class HomeFragment extends Fragment {
     ApiService apiService = ApiClient.getClient().create(ApiService.class);
     Button blog_ekle;
     Button filtrele;
+    Button ara;
     List<Blog> blogList;
     BlogAdapter adapter;
     SharedPreferences sharedPreferences;
@@ -53,6 +56,7 @@ public class HomeFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_home, container, false);
         blog_ekle = view.findViewById(R.id.blog_ekle);
         filtrele = view.findViewById(R.id.filtrele);
+        ara = view.findViewById(R.id.metin_ara);
         sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
@@ -62,24 +66,10 @@ public class HomeFragment extends Fragment {
         adapter = new BlogAdapter(getContext(), blogList);
         listView.setAdapter(adapter);
 
-        Call<List<Blog>> call = apiService.getBloglar();
-        call.enqueue(new Callback<List<Blog>>() {
-            @Override
-            public void onResponse(Call<List<Blog>> call, Response<List<Blog>> response) {
-                Log.d("api", "bağlanıyor");
-                if (response.isSuccessful() && response.body() != null) {
-                    Log.d("api", "bağlandı - " + response.body().size());
-                    blogList.clear();
-                    blogList.addAll(response.body());
-                    adapter.notifyDataSetChanged();
-                }
-                Log.d("api", String.valueOf(blogList.size()));
-            }
-
-            @Override
-            public void onFailure(Call<List<Blog>> call, Throwable t) {
-                t.printStackTrace();
-            }
+        getBloglar(blogs -> {
+            blogList.clear();
+            blogList.addAll(blogs);
+            adapter.notifyDataSetChanged();
         });
 
         listView.setOnItemClickListener((parent, view1, position, id) -> {
@@ -94,6 +84,7 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
+        if (sharedPreferences.getInt("userid", -1) <= 0) blog_ekle.setVisibility(View.GONE);
         blog_ekle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -154,104 +145,183 @@ public class HomeFragment extends Fragment {
                 "Versiyon Kontrol (Git)",
                 "Linux & Sistem Programlama"
         ));
-        filtrele.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LayoutInflater inflater = LayoutInflater.from(getContext());
-                View popupView = inflater.inflate(R.layout.pop_op_blog, null);
+        filtrele.setOnClickListener(view -> {
+            LayoutInflater inflater1 = LayoutInflater.from(getContext());
+            View popupView = inflater1.inflate(R.layout.pop_op_blog, null);
 
-                AlertDialog dialog = new AlertDialog.Builder(getContext())
-                        .setView(popupView)
-                        .create();
+            AlertDialog dialog = new AlertDialog.Builder(getContext())
+                    .setView(popupView)
+                    .create();
 
-                dialog.show();
+            dialog.show();
 
-                Button filtrele = popupView.findViewById(R.id.etiketleri_onayla);
+            Button filtrele = popupView.findViewById(R.id.etiketleri_onayla);
 
-                RecyclerView recyclerEtiketler = popupView.findViewById(R.id.recycler_etiketler);
-                recyclerEtiketler.setLayoutManager(new LinearLayoutManager(getContext()));
+            RecyclerView recyclerEtiketler = popupView.findViewById(R.id.recycler_etiketler);
+            recyclerEtiketler.setLayoutManager(new LinearLayoutManager(getContext()));
 
-                Map<String, Boolean> secimDurumuGlobal = new LinkedHashMap<>();
-                for (int i = 0; i < 49; i++) {
-                    secimDurumuGlobal.put(etiketlerList.get(i), false);
-                }
+            Map<String, Boolean> secimDurumuGlobal = new LinkedHashMap<>();
+            for (int i = 0; i < 49; i++) {
+                secimDurumuGlobal.put(etiketlerList.get(i), false);
+            }
 
-                EtiketAdapter adapter = new EtiketAdapter(etiketlerList, secimDurumuGlobal);
-                recyclerEtiketler.setAdapter(adapter);
+            EtiketAdapter adapter = new EtiketAdapter(etiketlerList, secimDurumuGlobal);
+            recyclerEtiketler.setAdapter(adapter);
 
-                filtrele.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        StringBuilder fltr = new StringBuilder("");
-                        for (Boolean baslik :  secimDurumuGlobal.values()) {
-                            fltr.append(baslik ? "1," : "0,");
-                        }
-                        fltr.deleteCharAt(fltr.length() - 1);
+            filtrele.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    StringBuilder fltr = new StringBuilder("");
+                    for (Boolean baslik :  secimDurumuGlobal.values()) {
+                        fltr.append(baslik ? "1," : "0,");
+                    }
+                    fltr.deleteCharAt(fltr.length() - 1);
 
-                        List<Blog> filtreBloglar = new ArrayList<>();
-                        Call<List<Blog>> call = apiService.getBloglar();
-                        call.enqueue(new Callback<List<Blog>>() {
-                            @Override
-                            public void onResponse(Call<List<Blog>> call, Response<List<Blog>> response) {
-                                if (response.isSuccessful() && response.body() != null) {
-                                    for (Blog blog : response.body()) {
-                                        String[] blogEtkt = blog.getEtiketler().split(",");
-                                        String[] filtre = fltr.toString().split(",");
+                    List<Blog> filtreBloglar = new ArrayList<>();
+                    Call<List<Blog>> call1 = apiService.getBloglar();
+                    call1.enqueue(new Callback<List<Blog>>() {
+                        @Override
+                        public void onResponse(Call<List<Blog>> call1, Response<List<Blog>> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                for (Blog blog : response.body()) {
+                                    String[] blogEtkt = blog.getEtiketler().split(",");
+                                    String[] filtre = fltr.toString().split(",");
 
-                                        //filtreleme
-                                        for (int i = 0; i < blogEtkt.length; i++) {
-                                            int bit1 = Integer.parseInt(blogEtkt[i]);
-                                            int bit2 = Integer.parseInt(filtre[i]);
-                                            int andResult = bit1 & bit2; // bitwise AND
+                                    //filtreleme
+                                    for (int i = 0; i < blogEtkt.length; i++) {
+                                        int bit1 = Integer.parseInt(blogEtkt[i]);
+                                        int bit2 = Integer.parseInt(filtre[i]);
+                                        int andResult = bit1 & bit2; // bitwise AND
 
-                                            if (andResult == 1) {
-                                                filtreBloglar.add(blog);
+                                        if (andResult == 1) {
+                                            filtreBloglar.add(blog);
 
-                                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                                                LayoutInflater inflater = getLayoutInflater();
-                                                View dialogView = inflater.inflate(R.layout.filtre_list, null);
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                            LayoutInflater inflater1 = getLayoutInflater();
+                                            View dialogView = inflater1.inflate(R.layout.filtre_list, null);
 
-                                                builder.setView(dialogView);
-                                                AlertDialog dialog = builder.create();
+                                            builder.setView(dialogView);
+                                            AlertDialog dialog = builder.create();
 
-                                                ListView listView = dialogView.findViewById(R.id.dialog_list);
-                                                BlogAdapter adapter = new BlogAdapter(getContext(), filtreBloglar);
-                                                listView.setAdapter(adapter);
+                                            ListView listView1 = dialogView.findViewById(R.id.dialog_list);
+                                            BlogAdapter adapter = new BlogAdapter(getContext(), filtreBloglar);
+                                            listView1.setAdapter(adapter);
 
-                                                listView.setOnItemClickListener((parent, view1, position, id) -> {
-                                                    Blog secilenBlog = filtreBloglar.get(position);
-                                                    Intent intent = new Intent(getContext(), BlogEkran.class);
-                                                    intent.putExtra("blog_baslik", secilenBlog.getBaslik());
-                                                    intent.putExtra("blog_ekleyen", String.valueOf(secilenBlog.getEkleyen_id()));
-                                                    intent.putExtra("blog_metin", secilenBlog.getMetin());
-                                                    intent.putExtra("blog_tarih", secilenBlog.getTarih());
-                                                    intent.putExtra("blog_etiketler", secilenBlog.getEtiketler());
-                                                    intent.putExtra("blog_id", secilenBlog.getId());
-                                                    startActivity(intent);
-                                                });
+                                            listView1.setOnItemClickListener((parent, view1, position, id) -> {
+                                                Blog secilenBlog = filtreBloglar.get(position);
+                                                Intent intent = new Intent(getContext(), BlogEkran.class);
+                                                intent.putExtra("blog_baslik", secilenBlog.getBaslik());
+                                                intent.putExtra("blog_ekleyen", String.valueOf(secilenBlog.getEkleyen_id()));
+                                                intent.putExtra("blog_metin", secilenBlog.getMetin());
+                                                intent.putExtra("blog_tarih", secilenBlog.getTarih());
+                                                intent.putExtra("blog_etiketler", secilenBlog.getEtiketler());
+                                                intent.putExtra("blog_id", secilenBlog.getId());
+                                                startActivity(intent);
+                                            });
 
-                                                dialog.show();
+                                            dialog.show();
 
-                                                break;
-                                            }
+                                            break;
                                         }
                                     }
                                 }
                             }
+                        }
 
-                            @Override
-                            public void onFailure(Call<List<Blog>> call, Throwable t) {
-                                t.printStackTrace();
+                        @Override
+                        public void onFailure(Call<List<Blog>> call1, Throwable t) {
+                            t.printStackTrace();
+                        }
+                    });
+
+                    dialog.dismiss();
+                }
+            });
+        });
+
+        ara.setOnClickListener(view -> {
+            EditText input = new EditText(getContext());
+            input.setHint("Aramak istediğiniz metni giriniz");
+            input.setBackgroundResource(android.R.drawable.edit_text);
+            input.setPadding(30, 20, 30, 40);
+
+            LinearLayout containerAra = new LinearLayout(getContext());
+            containerAra.setOrientation(LinearLayout.VERTICAL);
+            containerAra.setPadding(40,50,40,40);
+
+            containerAra.addView(input);
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Arama")
+                    .setView(containerAra)
+                    .setPositiveButton("Ara", (dialog1, whichButton) -> {
+                        getBloglar(blogs -> {
+                            List<Blog> araBloglar = new ArrayList<>();
+                            for (Blog blog : blogs) {
+                                if (blog.getMetin().contains(input.getText().toString()) ||
+                                        blog.getBaslik().contains(input.getText().toString())) {
+                                    araBloglar.add(blog);
+                                }
                             }
-                        });
 
-                        dialog.dismiss();
-                    }
-                });
-            }
+                            if (araBloglar.isEmpty()) {
+                                Toast.makeText(getContext(), "Hiçbir arama sonucu bulunamadı!", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            LayoutInflater inflater1 = getLayoutInflater();
+                            View dialogView = inflater1.inflate(R.layout.filtre_list, null);
+                            TextView topText = dialogView.findViewById(R.id.dialog_title);
+                            topText.setText("Arama Sonuçları");
+
+                            builder.setView(dialogView);
+                            builder.setNegativeButton("Geri", null);
+                            AlertDialog dialog = builder.create();
+
+                            ListView listViewara = dialogView.findViewById(R.id.dialog_list);
+                            BlogAdapter adapter = new BlogAdapter(getContext(), araBloglar);
+                            listViewara.setAdapter(adapter);
+
+                            listViewara.setOnItemClickListener((parent, view1, position, id) -> {
+                                Blog secilenBlog = araBloglar.get(position);
+                                Intent intent = new Intent(getContext(), BlogEkran.class);
+                                intent.putExtra("blog_baslik", secilenBlog.getBaslik());
+                                intent.putExtra("blog_ekleyen", String.valueOf(secilenBlog.getEkleyen_id()));
+                                intent.putExtra("blog_metin", secilenBlog.getMetin());
+                                intent.putExtra("blog_tarih", secilenBlog.getTarih());
+                                intent.putExtra("blog_etiketler", secilenBlog.getEtiketler());
+                                intent.putExtra("blog_id", secilenBlog.getId());
+                                startActivity(intent);
+                            });
+
+                            dialog.show();
+                        });
+                    })
+                    .setNegativeButton("İptal", null)
+                    .show();
         });
 
         return view;
+    }
+
+    private void getBloglar(Consumer<List<Blog>> callback) {
+        Call<List<Blog>> call12 = apiService.getBloglar();
+        call12.enqueue(new Callback<List<Blog>>() {
+            @Override
+            public void onResponse(Call<List<Blog>> call12, Response<List<Blog>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.accept(new ArrayList<>(response.body()));
+                } else {
+                    callback.accept(new ArrayList<>()); // boş liste dön
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Blog>> call12, Throwable t) {
+                t.printStackTrace();
+                callback.accept(new ArrayList<>()); // hata olursa boş liste dön
+            }
+        });
     }
 
     @Override
@@ -285,21 +355,10 @@ public class HomeFragment extends Fragment {
                     .apply();
         }
 
-        Call<List<Blog>> call = apiService.getBloglar();
-        call.enqueue(new Callback<List<Blog>>() {
-            @Override
-            public void onResponse(Call<List<Blog>> call, Response<List<Blog>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    blogList.clear();
-                    blogList.addAll(response.body());
-                    adapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Blog>> call, Throwable t) {
-                t.printStackTrace();
-            }
+        getBloglar(blogs -> {
+            blogList.clear();
+            blogList.addAll(blogs);
+            adapter.notifyDataSetChanged();
         });
     }
 
