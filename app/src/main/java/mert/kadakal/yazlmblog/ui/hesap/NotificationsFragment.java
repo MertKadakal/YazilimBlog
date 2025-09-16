@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -108,9 +109,15 @@ public class NotificationsFragment extends Fragment {
 
         cikis = view.findViewById(R.id.cikis);
         cikis.setOnClickListener(view12 -> {
-            editor.putInt("userid", -1);
-            editor.apply();
-            ekranGuncelle(-1);
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Çıkış yapmak istediğinize emin misiniz?")
+                    .setPositiveButton("Tamam", (dialogInterface, i) -> {
+                        editor.putInt("userid", -1);
+                        editor.apply();
+                        ekranGuncelle(-1);
+                    })
+                    .setNegativeButton("İptal", (d, w) -> d.dismiss())
+                    .show();
         });
 
         mail = view.findViewById(R.id.mail);

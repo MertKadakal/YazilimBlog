@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="mert.kadakal.yazlmblog.ui.tartisma.DashboardFragment"
+        android:name="mert.kadakal.yazlmblog.ui.populer.DashboardFragment"
         android:label="@string/title_yardim"
         tools:layout="@layout/fragment_dashboard" />
 
