@@ -87,7 +87,7 @@ public class DashboardFragment extends Fragment {
                             blogAvgPuanlar.put(blog, avg);
 
                             kalan[0]--; // bu blog için yorumlar işlendi
-                            if (kalan[0] == 0) { // tüm bloglar tamamlandı
+                            if (kalan[0] == 0 || blogAvgPuanlar.size() == 10) { // tüm bloglar tamamlandı veya 10 blog sınırına gelindi
                                 blogList.clear();
                                 blogAvgPuanlar.entrySet().stream()
                                         .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))

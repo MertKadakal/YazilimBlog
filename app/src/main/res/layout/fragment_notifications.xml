@@ -88,8 +88,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="invisible"
-        android:padding="10dp"
-        android:layout_marginBottom="50dp">
+        android:padding="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
