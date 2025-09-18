@@ -118,11 +118,15 @@ public class BlogEkran extends AppCompatActivity {
                                 return;
                             }
 
-                            String[] options = {"Şikayet Et", "Bloggerı Görüntüle"};
+                            String[] options;
+                            options = new String[]{"Şikayet Et", "Bloggerı Görüntüle"};
+                            if (sharedPreferences.getInt("userid", -1) <= 0) {
+                                options = new String[]{"Bloggerı Görüntüle"};
+                            }
                             new AlertDialog.Builder(BlogEkran.this)
                                     .setTitle("Ne yapmak istiyorsunuz?")
                                     .setItems(options, (dialog, which) -> {
-                                        if (which == 0) {
+                                        if (which == 1) {
                                             // EditText oluştur
                                             EditText input = new EditText(BlogEkran.this);
                                             input.setHint("Bu yorum hakkındaki şikayetinizi girin");
@@ -187,7 +191,7 @@ public class BlogEkran extends AppCompatActivity {
 
 
 
-                                        } else if (which == 1) {
+                                        } else if (which == 0) {
                                             getKullanicilar(kullanicilar -> {
                                                 int blogger_id = -1;
                                                 for (Kullanici k : kullanicilar) {
@@ -304,7 +308,7 @@ public class BlogEkran extends AppCompatActivity {
             AtomicReference<AtomicReferenceArray<String>> secenekListesi =
                     new AtomicReference<>(new AtomicReferenceArray<>(new String[0]));
 
-            if (sharedPreferences.getInt("userid", -1) == -1) {
+            if (sharedPreferences.getInt("userid", -1) <= 0) {
                 secenekListesi.set(new AtomicReferenceArray<>(new String[]{"Bloggerı görüntüle"}));
 
                 for (int i = 0; i < secenekListesi.get().length(); i++) {
@@ -323,9 +327,10 @@ public class BlogEkran extends AppCompatActivity {
                             });
                             break;
                     }
-                    popupMenu.show();
                     return true;
                 });
+
+                popupMenu.show();
             } else {
                 getKullanicilar(kullanicilar -> {
                     for (Kullanici k : kullanicilar) {
@@ -340,7 +345,7 @@ public class BlogEkran extends AppCompatActivity {
                             } else if (currentUserId > 0) {
                                 // Başka bir kullanıcıysa
                                 secenekListesi.set(new AtomicReferenceArray<>(new String[]{
-                                        "Puanla ve yorum yap",
+                                         "Puanla ve yorum yap",
                                         "Şikayet Et",
                                         "Bloggerı görüntüle",
                                         "Favorilere ekle"
@@ -536,6 +541,7 @@ public class BlogEkran extends AppCompatActivity {
 
                                         LinearLayout kutuLayout = new LinearLayout(this);
                                         kutuLayout.setOrientation(LinearLayout.HORIZONTAL);
+                                        kutuLayout.setPadding(0, 30, 0, 30);
 
                                         final int[] secilenPuan = {-1}; // Seçilen puanı tutmak için
 

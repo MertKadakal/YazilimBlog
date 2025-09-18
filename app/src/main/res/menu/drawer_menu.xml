@@ -1,43 +1,42 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/nav_isim"
+        android:title="YazılımBlog"
+        android:enabled="false"
+        />
+
     <item
         android:id="@+id/nav_home"
         android:title="Ana Sayfa"
         android:icon="@drawable/blog" />
+
     <item
         android:id="@+id/nav_popular"
         android:title="Popüler"
-        android:icon="@drawable/tartisma" />
+        android:icon="@drawable/star" />
+
     <item
         android:id="@+id/nav_account"
         android:title="Hesap"
         android:icon="@drawable/hesap" />
 
-    <!-- Ayırıcı -->
-    <item
-        android:title="──────────"
-        android:enabled="false" />
+    <!-- Ayırıcı --> <item android:title="──────────" android:enabled="false" />
 
     <item
         android:id="@+id/nav_fikironeri"
         android:title="Fikir ve Önerileriniz"
-         />
+        android:icon="@drawable/fikir"/>
 
-    <!-- Ayırıcı -->
-    <item
-        android:title="──────────"
-        android:enabled="false" />
 
     <item
         android:id="@+id/nav_kvkk"
         android:title="KVKK Aydınlatma Metni"
-        />
+        android:icon="@drawable/text"/>
 
     <item
         android:id="@+id/nav_kahve"
         android:title="Bana Kahve Ismarla :)"
-        />
-
-
-
+        android:icon="@drawable/kahve"/>
 </menu>

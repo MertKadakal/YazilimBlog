@@ -224,6 +224,10 @@ public class HomeFragment extends Fragment {
                                             break;
                                         }
                                     }
+                                    if (filtreBloglar.isEmpty()) {
+                                        Toast.makeText(getContext(), "Filtrelemenize uygun blog bulunamadı", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
                                 }
                             }
                         }
@@ -254,6 +258,11 @@ public class HomeFragment extends Fragment {
                     .setTitle("Arama")
                     .setView(containerAra)
                     .setPositiveButton("Ara", (dialog1, whichButton) -> {
+                        if (input.getText().toString().isEmpty()) {
+                            Toast.makeText(getContext(), "Arama alanı doldurulmalıdır", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
                         getBloglar(blogs -> {
                             List<Blog> araBloglar = new ArrayList<>();
                             for (Blog blog : blogs) {

@@ -141,28 +141,9 @@
                         android:layout_height="wrap_content"
                         android:text="toplam blog" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
 
-                        <TextView
-                            android:id="@+id/cikis"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="⛔"
-                            android:padding="5dp"
-                            android:textSize="20dp">
-                        </TextView>
 
-                        <TextView
-                            android:id="@+id/favs"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="❤️"
-                            android:padding="5dp"
-                            android:textSize="20dp">
-                        </TextView>
-                    </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -171,27 +152,47 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
+        </LinearLayout>
 
-            <!-- Sağdaki buton -->
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/ayarlar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
+                android:text="⚙️"
+                android:textSize="30sp"
+                android:layout_gravity="center_vertical" />
 
-                <TextView
-                    android:id="@+id/ayarlar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="⚙️"
-                    android:layout_gravity="center"
-                    android:textSize="30dp">
+            <TextView
+                android:id="@+id/favs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="❤️"
+                android:textSize="30sp"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="center_vertical" />
 
-                </TextView>
+            <!-- Boşluk için weight -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-
-            </LinearLayout>
+            <TextView
+                android:id="@+id/cikis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⛔"
+                android:textSize="30sp"
+                android:layout_gravity="center_vertical" />
         </LinearLayout>
+
 
         <TextView
             android:layout_width="match_parent"

@@ -175,6 +175,18 @@ public class BlogEkle extends AppCompatActivity {
                     return;
                 }
 
+                int trueCount = 0;
+                for (Boolean b : secimDurumuGlobal.values()) {
+                    if (b != null && b) {  // null kontrolü
+                        trueCount++;
+                    }
+                }
+                if (trueCount > 10 || trueCount == 0) {
+                    Toast.makeText(BlogEkle.this, "1 ila 10 arası sayıda etiket seçebilirsiniz (" + trueCount + " tane seçtiniz)", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
                 if (ekle.getText().toString().equals("Ekle")) {
                     LocalDate today = null;
                     DateTimeFormatter formatter = null;

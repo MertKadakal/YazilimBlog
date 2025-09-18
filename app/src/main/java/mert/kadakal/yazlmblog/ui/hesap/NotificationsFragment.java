@@ -115,6 +115,7 @@ public class NotificationsFragment extends Fragment {
                         editor.putInt("userid", -1);
                         editor.apply();
                         ekranGuncelle(-1);
+
                     })
                     .setNegativeButton("İptal", (d, w) -> d.dismiss())
                     .show();
@@ -834,8 +835,8 @@ public class NotificationsFragment extends Fragment {
                             Toast.makeText(getContext(), k.getKullanici_adi(), Toast.LENGTH_SHORT).show();
                             if (k.getKullanici_adi().equals(isim)) {
                                 if (k.getParola().equals(parola)) {
-                                    Toast.makeText(getContext(), "Giriş yapıldı", Toast.LENGTH_SHORT).show();
-                                    editor.putInt("userid", k.getId());
+                                    editor.putInt("userid", k.getId()).apply();
+                                    editor.putString("username", k.getKullanici_adi()).apply();
                                     ekranGuncelle(k.getId());
                                 } else {
                                     Toast.makeText(getContext(), "Parola yanlış girildi", Toast.LENGTH_SHORT).show();
@@ -899,5 +900,17 @@ public class NotificationsFragment extends Fragment {
 
             ekranGuncelle(sharedPreferences.getInt("userid", -1));
         }
+
+        getKullanicilar(kullanicilar -> {
+            for (Kullanici k : kullanicilar) {
+                if (k.getId() == sharedPreferences.getInt("userid", -1)) {
+                    hesap_ismi.setText(k.getKullanici_adi());
+                    hesap_kaydolma.setText(k.getKayit_tarihi()+" tarihinde katıldı");
+                    hesap_total.setText(totalBlog == 0 ? "Henüz eklenmiş blog yok" : "Toplamda "+totalBlog+" yayınlanan blog");
+                    break;
+                }
+            }
+        });
+
     }
 }

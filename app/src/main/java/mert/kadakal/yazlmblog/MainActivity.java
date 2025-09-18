@@ -4,14 +4,20 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
+import android.text.style.StyleSpan;
+import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -28,7 +34,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import mert.kadakal.yazlmblog.api.ApiClient;
+import mert.kadakal.yazlmblog.api.ApiService;
 import mert.kadakal.yazlmblog.api.Sikayet;
+import mert.kadakal.yazlmblog.api.Yorum;
 import mert.kadakal.yazlmblog.ui.blog.BlogEkran;
 import mert.kadakal.yazlmblog.ui.blog.HomeFragment;
 import mert.kadakal.yazlmblog.ui.hesap.NotificationsFragment;
@@ -41,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    SharedPreferences sharedPreferences;
+    ApiService apiService = ApiClient.getClient().create(ApiService.class);
+    MenuItem navIsim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +61,12 @@ public class MainActivity extends AppCompatActivity {
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        navIsim = navigationView.getMenu().findItem(R.id.nav_isim);
+        SpannableString spanTitle = new SpannableString("YazılımBlog");
+        spanTitle.setSpan(new StyleSpan(Typeface.BOLD), 0, spanTitle.length(), 0);
+        spanTitle.setSpan(new AbsoluteSizeSpan(24, true), 0, spanTitle.length(), 0);
+        navIsim.setTitle(spanTitle);
 
         // Menü tıklamalarını yakala
         navigationView.setNavigationItemSelectedListener(item -> {
@@ -70,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.nav_kahve) {
                 showKahveDialog();
             } else if (id == R.id.nav_fikironeri) {
+                if (sharedPreferences.getInt("userid", -1) == -1) {
+                    Toast.makeText(this, "Bir hesaba giriş yapmalısınız", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
                 showFikirDialog();
             }
 
@@ -183,13 +205,38 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Gönder", (dialog1, whichButton) -> {
                     String aciklama = input.getText().toString().trim();
 
-                    new AlertDialog.Builder(this)
-                            .setTitle("✅ Geri bildiriminizi aldık ✅")
-                            .setPositiveButton("Tamam", null)
-                            .show();
+                    Yorum yeniYorum = new Yorum();
+                    yeniYorum.setEklenen_blog(-1);
+                    yeniYorum.setEkleyen_id(sharedPreferences.getInt("userid", -1));
+                    yeniYorum.setIcerik(aciklama);
+                    yeniYorum.setTarih("00-00-0000");
+                    yeniYorum.setPuan(0);
+
+                    Call<Yorum> callYorum = apiService.addYorum(yeniYorum);
+                    callYorum.enqueue(new Callback<Yorum>() {
+                        @Override
+                        public void onResponse(Call<Yorum> call, Response<Yorum> response) {
+                            if (response.isSuccessful()) {
+                                new AlertDialog.Builder(MainActivity.this)
+                                        .setTitle("✅ Geri bildiriminizi aldık ✅")
+                                        .setPositiveButton("Tamam", null)
+                                        .show();
+                            } else {
+                                try {
+                                    String errorJson = response.errorBody().string(); // errorBody string olarak al
+                                    Log.e("API", "Hata: " + response.code() + " - " + errorJson);
+                                } catch (Exception e) {
+                                    Log.e("API", "Hata body okunamadı", e);
+                                }
+                            }
+                        }
+                        @Override
+                        public void onFailure(Call<Yorum> call, Throwable t) {
+                            Log.e("API", "İstek başarısız: " + t.getMessage());
+                        }
+                    });
                 })
                 .setNegativeButton("İptal", (dialog1, whichButton) -> dialog1.dismiss())
                 .show();
-
     }
 }

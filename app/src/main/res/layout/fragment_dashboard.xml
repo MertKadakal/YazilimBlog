@@ -22,10 +22,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="Geçtiğimiz Ayın En Popüler Blogları"
+            android:text="Yeni Popüler Bloglar"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="25dp"
+            android:textStyle="bold"
+            android:textSize="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

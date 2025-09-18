@@ -1,6 +1,7 @@
 package mert.kadakal.yazlmblog.ui.populer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import mert.kadakal.yazlmblog.api.ApiService;
 import mert.kadakal.yazlmblog.api.Blog;
 import mert.kadakal.yazlmblog.api.Yorum;
 import mert.kadakal.yazlmblog.ui.blog.BlogAdapter;
+import mert.kadakal.yazlmblog.ui.blog.BlogEkran;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -56,6 +58,17 @@ public class DashboardFragment extends Fragment {
         blogList = new ArrayList<>();
         adapter = new BlogAdapter(getContext(), blogList);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
+            Blog secilenBlog = blogList.get(position);
+            Intent intent = new Intent(getContext(), BlogEkran.class);
+            intent.putExtra("blog_baslik", secilenBlog.getBaslik());
+            intent.putExtra("blog_ekleyen", String.valueOf(secilenBlog.getEkleyen_id()));
+            intent.putExtra("blog_metin", secilenBlog.getMetin());
+            intent.putExtra("blog_tarih", secilenBlog.getTarih());
+            intent.putExtra("blog_etiketler", secilenBlog.getEtiketler());
+            intent.putExtra("blog_id", secilenBlog.getId());
+            startActivity(intent);
+        });
 
         getBloglar(blogs -> {
             blogAvgPuanlar.clear();
