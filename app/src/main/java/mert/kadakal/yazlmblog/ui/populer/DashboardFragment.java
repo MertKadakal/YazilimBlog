@@ -10,12 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -43,6 +45,7 @@ public class DashboardFragment extends Fragment {
     ApiService apiService = ApiClient.getClient().create(ApiService.class);
     SharedPreferences sharedPreferences;
     ListView listView;
+    TextView intyok;
     ArrayList<Blog> blogList;
     BlogAdapter adapter;
     Map<Blog, Double> blogAvgPuanlar;
@@ -54,6 +57,8 @@ public class DashboardFragment extends Fragment {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         listView = view.findViewById(R.id.listView); // XML'deki ListView id'si
+        intyok = view.findViewById(R.id.int_yok);
+        intyok.setText("⌛");
         blogAvgPuanlar = new HashMap<>();
         blogList = new ArrayList<>();
         adapter = new BlogAdapter(getContext(), blogList);
@@ -75,6 +80,7 @@ public class DashboardFragment extends Fragment {
             blogList.clear();
 
             if (blogs.isEmpty()) return;
+            intyok.setVisibility(View.INVISIBLE);
 
             final int[] kalan = {blogs.size()}; // Kaç blog kaldığını saymak için
 
@@ -147,7 +153,16 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onFailure(Call<List<Blog>> call12, Throwable t) {
                 t.printStackTrace();
-                callback.accept(new ArrayList<>()); // hata olursa boş liste dön
+
+                if (t instanceof IOException) {
+                    // Network hatası → internet yok veya erişilemiyor
+                    intyok.setText("İnternet bağlantınızı\nkontrol ediniz");
+                } else {
+                    // Diğer hatalar
+                    Toast.makeText(getContext(), "Bir hata oluştu: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+                callback.accept(new ArrayList<>()); // boş liste dön
             }
         });
     }

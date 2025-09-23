@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 "Adres: Hacettepe Üniversitesi, ANKARA/Çankaya\n\n" +
                 "2. İşlenen Kişisel Veriler\n" +
                 "- Kullanıcı adı\n" +
+                "- Kullanıcı profil fotoğrafı\n" +
                 "- E-posta adresi\n" +
                 "- Telefon numarası\n\n" +
                 "3. Kişisel Verilerin İşlenme Amaçları\n" +
@@ -204,6 +205,11 @@ public class MainActivity extends AppCompatActivity {
                 .setView(container)
                 .setPositiveButton("Gönder", (dialog1, whichButton) -> {
                     String aciklama = input.getText().toString().trim();
+
+                    if (aciklama.isEmpty()) {
+                        Toast.makeText(this, "Boş bırakılamaz", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                     Yorum yeniYorum = new Yorum();
                     yeniYorum.setEklenen_blog(-1);

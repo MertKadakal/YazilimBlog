@@ -6,12 +6,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.content.DialogInterface;
 import android.content.ContentResolver;
 import android.webkit.MimeTypeMap;
 
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.google.firebase.storage.StorageException;
 import com.yalantis.ucrop.UCrop;
 
 import android.content.Intent;
@@ -66,6 +68,7 @@ import mert.kadakal.yazlmblog.api.ApiClient;
 import mert.kadakal.yazlmblog.api.ApiService;
 import mert.kadakal.yazlmblog.api.Blog;
 import mert.kadakal.yazlmblog.api.Kullanici;
+import mert.kadakal.yazlmblog.api.Sikayet;
 import mert.kadakal.yazlmblog.ui.blog.BlogAdapter;
 import mert.kadakal.yazlmblog.ui.blog.BlogEkran;
 import okhttp3.MediaType;
@@ -497,16 +500,57 @@ public class NotificationsFragment extends Fragment {
 
 
         pp = view.findViewById(R.id.pp);
-        pp.setOnClickListener(view -> openFileChooser());
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference("uploads/"+sharedPreferences.getInt("userid",-1));
-        storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            Glide.with(requireContext())
-                    .load(uri.toString())
-                    .transform(new RoundedCorners(30))
-                    .into(pp);
-        }).addOnFailureListener(e -> {
-            Toast.makeText(requireContext(), "Hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        pp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference("uploads/");
+                StorageReference fileRef = storageRef.child(String.valueOf(sharedPreferences.getInt("userid", -1)));
+
+                fileRef.getMetadata()
+                        .addOnSuccessListener(metadata -> {
+                            String[] options = new String[]{"Kaldır", "Değiştir"};
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("Ne yapmak istiyorsunuz?")
+                                    .setItems(options, (dialog, which) -> {
+                                        if (which == 0) { //kaldır
+                                            StorageReference fileRef2 = storageRef.child(String.valueOf(sharedPreferences.getInt("userid", -1)));
+                                            fileRef2.delete()
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        Toast.makeText(getContext(), "Profil resmi kaldırıldı", Toast.LENGTH_SHORT).show();
+                                                        pp.setImageResource(R.drawable.hesap);
+                                                        ekranGuncelle(sharedPreferences.getInt("userid", -1));
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        Toast.makeText(getContext(), "Profil resmi kaldırılırken hata oluştu", Toast.LENGTH_SHORT).show();
+                                                    });
+                                        } else if (which == 1) {
+                                            openFileChooser();
+                                        }
+                                    })
+                                    .show();
+                        })
+                        .addOnFailureListener(e -> {
+                            if (e instanceof StorageException && ((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND) {
+                                openFileChooser();
+                            } else {
+                                Log.e("STORAGE", "Kontrol sırasında hata: " + e.getMessage());
+                            }
+                        });
+            }
         });
+
+        if (sharedPreferences.getInt("userid",-1) != -1) {
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference("uploads/"+sharedPreferences.getInt("userid",-1));
+            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                Glide.with(requireContext())
+                        .load(uri.toString())
+                        .transform(new RoundedCorners(30))
+                        .into(pp);
+            }).addOnFailureListener(e -> {
+                //Toast.makeText(requireContext(), "Hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
+        }
+
         ekranGuncelle(userid);
 
         return view;
@@ -589,7 +633,7 @@ public class NotificationsFragment extends Fragment {
                         .transform(new RoundedCorners(30))
                         .into(pp);
             }).addOnFailureListener(e -> {
-                Toast.makeText(requireContext(), "Hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                pp.setBackgroundResource(R.drawable.hesap);
             });
         }
     }
