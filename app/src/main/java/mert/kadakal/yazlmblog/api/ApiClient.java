@@ -1,5 +1,6 @@
 package mert.kadakal.yazlmblog.api;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -9,12 +10,17 @@ public class ApiClient {
 
     public static Retrofit getClient() {
         if (retrofit == null) {
+            // OkHttpClient
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .build();
+
+            // Retrofit
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
+                    .client(client) // buraya ekledik
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
         return retrofit;
     }
 }
-

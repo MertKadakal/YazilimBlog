@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "965744050686",
+    "firebase_url": "https://cizim-siparis-default-rtdb.firebaseio.com",
+    "project_id": "cizim-siparis",
+    "storage_bucket": "cizim-siparis.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965744050686:android:876b7980e67b4ca96880af",
+        "android_client_info": {
+          "package_name": "mert.kadakal.yazlmblog"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBn-umC3XSda8l_awPdfP-_pW5j5NmZ8Vo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

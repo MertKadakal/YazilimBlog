@@ -2,13 +2,23 @@ package mert.kadakal.yazlmblog.ui.hesap;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.provider.MediaStore;
 import android.content.DialogInterface;
+import android.content.ContentResolver;
+import android.webkit.MimeTypeMap;
+
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.yalantis.ucrop.UCrop;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -26,11 +36,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -53,6 +68,10 @@ import mert.kadakal.yazlmblog.api.Blog;
 import mert.kadakal.yazlmblog.api.Kullanici;
 import mert.kadakal.yazlmblog.ui.blog.BlogAdapter;
 import mert.kadakal.yazlmblog.ui.blog.BlogEkran;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -62,6 +81,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
@@ -77,21 +102,24 @@ public class NotificationsFragment extends Fragment {
     TextView hesap_total;
     TextView ayarlar;
     TextView favs;
+    TextView blog_yok;
+    ImageView pp;
     LinearLayout secenekler;
     LinearLayout hesap;
     ApiService apiService = ApiClient.getClient().create(ApiService.class);
-    Call<List<Kullanici>> call = apiService.getKullanicilar();
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     int totalBlog = 0;
     private final List<AlertDialog> acikDialoglar = new ArrayList<>();
+    private static final int IMAGE_REQUEST = 1;
+    private Uri imageUri;
+
+
 
 
     ListView listView;
     ArrayList<Blog> blogList;
     BlogAdapter adapter;
-    //String sunucuKok = "13.60.84.136/yazilimBlog";
-    //private static final int PICK_IMAGE_REQUEST = 1;
 
     @SuppressLint("ClickableViewAccessibility")
     @Nullable
@@ -114,8 +142,8 @@ public class NotificationsFragment extends Fragment {
                     .setPositiveButton("Tamam", (dialogInterface, i) -> {
                         editor.putInt("userid", -1);
                         editor.apply();
+                        blog_yok.setVisibility(View.INVISIBLE);
                         ekranGuncelle(-1);
-
                     })
                     .setNegativeButton("İptal", (d, w) -> d.dismiss())
                     .show();
@@ -132,6 +160,9 @@ public class NotificationsFragment extends Fragment {
 
         secenekler = view.findViewById(R.id.secenekler_layout);
         hesap = view.findViewById(R.id.hesap_layout);
+
+        blog_yok = view.findViewById(R.id.blog_yok_img_hesap);
+        blog_yok.setVisibility(View.INVISIBLE);
 
         ayarlar = view.findViewById(R.id.ayarlar);
         ayarlar.setOnClickListener(v -> getKullanicilar(kullanicilar -> {
@@ -463,6 +494,19 @@ public class NotificationsFragment extends Fragment {
             }
         }));
 
+
+
+        pp = view.findViewById(R.id.pp);
+        pp.setOnClickListener(view -> openFileChooser());
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference("uploads/"+sharedPreferences.getInt("userid",-1));
+        storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            Glide.with(requireContext())
+                    .load(uri.toString())
+                    .transform(new RoundedCorners(30))
+                    .into(pp);
+        }).addOnFailureListener(e -> {
+            Toast.makeText(requireContext(), "Hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
         ekranGuncelle(userid);
 
         return view;
@@ -497,6 +541,9 @@ public class NotificationsFragment extends Fragment {
                                 totalBlog += 1;
                             }
                         }
+                        if (totalBlog == 0) {
+                            blog_yok.setVisibility(View.VISIBLE);
+                        }
                         adapter.notifyDataSetChanged();
                     }
                 }
@@ -513,6 +560,8 @@ public class NotificationsFragment extends Fragment {
                         hesap_ismi.setText(k.getKullanici_adi());
                         hesap_kaydolma.setText(k.getKayit_tarihi()+" tarihinde katıldı");
                         hesap_total.setText(totalBlog == 0 ? "Henüz eklenmiş blog yok" : "Toplamda "+totalBlog+" yayınlanan blog");
+
+
                         break;
                     }
                 }
@@ -532,6 +581,16 @@ public class NotificationsFragment extends Fragment {
 
             editor.putInt("userid", userid);
             editor.apply();
+
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference("uploads/"+sharedPreferences.getInt("userid",-1));
+            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                Glide.with(requireContext())
+                        .load(uri.toString())
+                        .transform(new RoundedCorners(30))
+                        .into(pp);
+            }).addOnFailureListener(e -> {
+                Toast.makeText(requireContext(), "Hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
         }
     }
 
@@ -907,10 +966,120 @@ public class NotificationsFragment extends Fragment {
                     hesap_ismi.setText(k.getKullanici_adi());
                     hesap_kaydolma.setText(k.getKayit_tarihi()+" tarihinde katıldı");
                     hesap_total.setText(totalBlog == 0 ? "Henüz eklenmiş blog yok" : "Toplamda "+totalBlog+" yayınlanan blog");
+
+
                     break;
                 }
             }
         });
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void openFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, IMAGE_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == IMAGE_REQUEST && resultCode == Activity.RESULT_OK
+                && data != null && data.getData() != null) {
+            imageUri = data.getData();
+
+            // Çıkış dosyası için yeni Uri (cache içine kaydedelim)
+            Uri destinationUri = Uri.fromFile(new File(requireContext().getCacheDir(), "cropped.jpg"));
+
+            // UCrop başlat
+            UCrop.of(imageUri, destinationUri)
+                    .withAspectRatio(1, 1)  // kare oran
+                    .withMaxResultSize(500, 500) // max çözünürlük
+                    .start(requireContext(), this); // fragment içinde
+        }
+
+        // UCrop sonucu
+        if (requestCode == UCrop.REQUEST_CROP && resultCode == Activity.RESULT_OK) {
+            final Uri resultUri = UCrop.getOutput(data);
+            if (resultUri != null) {
+                imageUri = resultUri; // kırpılmış görsel
+                uploadImage();        // yükleme işlemi
+            }
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            final Throwable cropError = UCrop.getError(data);
+            Toast.makeText(getContext(), "Kırpma hatası: " + cropError.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private void uploadImage() {
+        if (imageUri != null) {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference("uploads");
+            StorageReference fileReference = storageReference.child(String.valueOf(sharedPreferences.getInt("userid", -1)));
+
+            // Başlangıçta sadece "Yükleniyor..." yazan dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("Yükleniyor...");
+            builder.setCancelable(false);
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+            fileReference.putFile(imageUri)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                            String downloadUrl = uri.toString();
+                            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("images");
+                            String uploadId = dbRef.push().getKey();
+                            dbRef.child(uploadId).setValue(downloadUrl);
+
+                            dialog.dismiss();
+
+                            AlertDialog dialog1 = new AlertDialog.Builder(getContext())
+                                    .setTitle("Yüklendi!")
+                                    .setNegativeButton("Tamam", (d, whichButton) -> dialog.dismiss()) // dialog.dismiss() kullan
+                                    .create();
+                            dialog1.show();
+
+                            ekranGuncelle(sharedPreferences.getInt("userid", -1));
+
+                        });
+                    })
+                    .addOnFailureListener(e -> {
+                        dialog.dismiss();
+                        Toast.makeText(getContext(), "Hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        }
+    }
+
+
+    // Dosya uzantısı alma metodu
+    private String getFileExtension(Uri uri) {
+        ContentResolver cR = requireContext().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
+    }
+
+
+
+
 }

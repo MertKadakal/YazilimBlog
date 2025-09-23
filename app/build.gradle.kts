@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -39,6 +40,8 @@ android {
         exclude("META-INF/NOTICE.md")
         exclude("META-INF/LICENSE.md")
     }
+
+
 }
 
 dependencies {
@@ -51,6 +54,7 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.filament.android)
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -62,7 +66,12 @@ dependencies {
     
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
+    implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
+    implementation("com.google.firebase:firebase-analytics")
 
+    implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.google.firebase:firebase-database:20.3.0")
 
+    implementation("com.github.yalantis:ucrop:2.2.9-native")
 
 }

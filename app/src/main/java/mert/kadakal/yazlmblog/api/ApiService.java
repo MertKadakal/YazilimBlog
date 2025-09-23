@@ -16,6 +16,16 @@ import retrofit2.http.Path;
 
 public interface ApiService {
 
+    //görseller
+    @Multipart
+    @POST("api/upload")
+    Call<ResponseBody> uploadImage(
+            @Part MultipartBody.Part image
+    );
+
+    @GET("images/{filename}")
+    Call<ResponseBody> getImage(@Path("filename") String filename);
+
     //kullanıcılar
     @GET("api/Kullanici")
     Call<List<Kullanici>> getKullanicilar();

@@ -15,9 +15,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -43,7 +49,7 @@ public class Blogger extends AppCompatActivity {
     TextView hesap_ismi;
     TextView hesap_kaydolma;
     TextView hesap_total;
-    ImageView blog_yok;
+    TextView blog_yok;
     TextView sikayet;
     TextView info;
     SharedPreferences sharedPreferences;
@@ -61,14 +67,14 @@ public class Blogger extends AppCompatActivity {
         hesap_total = findViewById(R.id.hesap_toplamblog);
         sikayet = findViewById(R.id.sikayet);
         info = findViewById(R.id.bilgi);
-        blog_yok = findViewById(R.id.blog_yok_img);
+        blog_yok = findViewById(R.id.blog_yok_img_blogger);
         blog_yok.setVisibility(View.INVISIBLE);
 
         getKullanicilar(kullanicilar -> {
             for (Kullanici k : kullanicilar) {
                 if (k.getId() == blogger_id) {
                     hesap_ismi.setText(k.getKullanici_adi());
-                    hesap_kaydolma.setText(k.getKayit_tarihi());
+                    hesap_kaydolma.setText(k.getKayit_tarihi() + " tarihinde katıldı");
                 }
             }
         });
@@ -225,7 +231,16 @@ public class Blogger extends AppCompatActivity {
             });
         });
 
-
+        ImageView pp = findViewById(R.id.pp);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference("uploads/"+blogger_id);
+        storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            Glide.with(this)
+                    .load(uri.toString())
+                    .transform(new RoundedCorners(30))
+                    .into(pp);
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void getKullanicilar(Consumer<List<Kullanici>> callback) {

@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,6 +48,7 @@ public class HomeFragment extends Fragment {
     Button blog_ekle;
     Button filtrele;
     Button ara;
+    TextView intyok;
     List<Blog> blogList;
     BlogAdapter adapter;
     SharedPreferences sharedPreferences;
@@ -58,6 +60,8 @@ public class HomeFragment extends Fragment {
         filtrele = view.findViewById(R.id.filtrele);
         ara = view.findViewById(R.id.metin_ara);
         sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        intyok = view.findViewById(R.id.int_yok);
+        intyok.setVisibility(View.INVISIBLE);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
 
@@ -328,7 +332,16 @@ public class HomeFragment extends Fragment {
             @Override
             public void onFailure(Call<List<Blog>> call12, Throwable t) {
                 t.printStackTrace();
-                callback.accept(new ArrayList<>()); // hata olursa boş liste dön
+
+                if (t instanceof IOException) {
+                    // Network hatası → internet yok veya erişilemiyor
+                    intyok.setVisibility(View.VISIBLE);
+                } else {
+                    // Diğer hatalar
+                    Toast.makeText(getContext(), "Bir hata oluştu: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+                callback.accept(new ArrayList<>()); // boş liste dön
             }
         });
     }
