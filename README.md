@@ -41,10 +41,13 @@ Kullanıcılar blog yazılarını görüntüleyebilir, diğer kullanıcıların 
 ---
 
 ## 📸 Ekran Görüntüleri
-| Ana Sayfa | Blog | Navigasyon | Hesap | Popüler | Yorum |
-|-----------|------------|-------------|-----------|------------|-------------|
-| ![Ana Sayfa](images/anasayfa.png) | ![Blog Detay](images/blog.png) | ![Navigasyon](images/yanmenu.png) | ![Ana Sayfa](images/hesap.png) | ![Blog Detay](images/populer.png) | ![Navigasyon](images/yorum.png) |
+| Ana Sayfa | Blog | Navigasyon |
+|-----------|------------|-------------|
+| ![Ana Sayfa](images/anasayfa.png) | ![Blog Detay](images/blog.png) | ![Navigasyon](images/yanmenu.png) |
 
+| Hesap | Popüler | Yorum |
+|-----------|------------|-------------|
+| ![Ana Sayfa](images/hesap.png) | ![Blog Detay](images/populer.png) | ![Navigasyon](images/yorum.png) |
 ---
 
 ## KVKK Metni
