@@ -39,8 +39,44 @@ Kullanıcılar blog yazılarını görüntüleyebilir, diğer kullanıcıların 
 - **C#** - .NET proje geliştirme dili
 - **.NET Core / ASP.NET** – REST API geliştirme  
 - **AWS EC2** – Sunucu üzerinde daimi çalışan backend  
-- **Nginx / IIS (opsiyonel)** – Servis yönetimi  
-- **MySQL / SQL Server (kullandıysan)** – Veritabanı yönetimi 
+- **Nginx / Apache** – Servis yönetimi  
+- **MySQL** – Veritabanı yönetimi 
+
+---
+
+## Proje Dizin Yapısı
+
+```
+yazlmblog/
+│
+├── api/
+│   ├── ApiClient.java
+│   ├── ApiService.java
+│   ├── Blog.java
+│   ├── Kullanici.java
+│   ├── Sikayet.java
+│   └── Yorum.java
+│
+├── ui/
+│   ├── blog/
+│   │   ├── BlogAdapter.java
+│   │   ├── BlogEkle.java
+│   │   ├── BlogEkran.java
+│   │   ├── EtiketAdapter.java
+│   │   ├── EtiketlerList.java
+│   │   ├── HomeFragment.java
+│   │   └── YorumAdapter.java
+│   │
+│   ├── hesap/
+│   │   ├── Blogger.java
+│   │   ├── EmailCheckResult.java
+│   │   └── NotificationsFragment.java
+│   │
+│   └── populer/
+│       └── DashboardFragment.java
+│
+└── MainActivity.java
+```
 
 ---
 
@@ -59,6 +95,91 @@ Kullanıcılar blog yazılarını görüntüleyebilir, diğer kullanıcıların 
 | .NET Servisi | MySql Veritabanı Tabloları |
 |-----------|------------|
 | ![Ana Sayfa](images/api.png) | ![Blog Detay](images/tables.png) |
+
+---
+
+## API Servis Arayüzü
+
+Uygulamada Retrofit ile kullanılan `ApiService` arayüzü:
+
+```java
+public interface ApiService {
+
+    // Görseller
+    @Multipart
+    @POST("api/upload")
+    Call<ResponseBody> uploadImage(
+            @Part MultipartBody.Part image
+    );
+
+    @GET("images/{filename}")
+    Call<ResponseBody> getImage(@Path("filename") String filename);
+
+    // Kullanıcılar
+    @GET("api/Kullanici")
+    Call<List<Kullanici>> getKullanicilar();
+
+    @POST("api/Kullanici")
+    Call<Kullanici> addKullanici(@Body Kullanici yeniKullanici);
+
+    @DELETE("api/Kullanici/{id}")
+    Call<Void> deleteKullanici(@Path("id") String id);
+
+    @PUT("api/Kullanici")
+    Call<Kullanici> updateKullanici(@Body Kullanici yeniKullanici);
+
+    // Bloglar
+    @GET("api/Blog")
+    Call<List<Blog>> getBloglar();
+
+    @POST("api/Blog")
+    Call<Blog> addBlog(@Body Blog yeniBlog);
+
+    @DELETE("api/Blog/{id}")
+    Call<Void> deleteBlog(@Path("id") int id);
+
+    @PUT("api/Blog")
+    Call<Blog> updateBlog(@Body Blog yeniBlog);
+
+    // Yorumlar
+    @GET("api/Yorum")
+    Call<List<Yorum>> getYorumlar();
+
+    @POST("api/Yorum")
+    Call<Yorum> addYorum(@Body Yorum yeniYorum);
+
+    @DELETE("api/Yorum/{id}")
+    Call<Void> deleteYorum(@Path("id") int id);
+
+    // Şikayetler
+    @GET("api/Sikayet")
+    Call<List<Sikayet>> getSikayetler();
+
+    @POST("api/Sikayet")
+    Call<Sikayet> addSikayet(@Body Sikayet yeniSikayet);
+}
+
+public class ApiClient {
+    private static final String BASE_URL = "http://sitennikur.site/";
+    private static Retrofit retrofit;
+
+    public static Retrofit getClient() {
+        if (retrofit == null) {
+            // OkHttpClient
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .build();
+
+            // Retrofit
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .client(client) // buraya ekledik
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit;
+    }
+}
+```
 
 ---
 
