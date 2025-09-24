@@ -57,61 +57,9 @@ public class BlogEkle extends AppCompatActivity {
 
         // Activity seviyesinde bir map tanımla, tüm seçimleri burada tutacağız
         Map<String, Boolean> secimDurumuGlobal = new LinkedHashMap<>();
-        ArrayList<String> etiketlerList = new ArrayList<>(List.of(
-                "Yazılım Dilleri",
-                "Oyun Geliştirme",
-                "Web Geliştirme",
-                "Eğitim",
-                "Java",
-                "Python",
-                "C++",
-                "C#",
-                "JavaScript",
-                "Kotlin",
-                "Swift",
-                "Go",
-                "Rust",
-                "PHP",
-                "Ruby",
-                "TypeScript",
-                "Dart",
-                "R",
-                "Scala",
-                "Perl",
-                "HTML & CSS",
-                "Veri Yapıları",
-                "Algoritmalar",
-                "Yapay Zeka",
-                "Makine Öğrenmesi",
-                "Derin Öğrenme",
-                "Veri Bilimi",
-                "Siber Güvenlik",
-                "Blockchain",
-                "Mobil Geliştirme",
-                "Backend Geliştirme",
-                "Frontend Geliştirme",
-                "Fullstack Geliştirme",
-                "Bulut Bilişim",
-                "DevOps",
-                "Veritabanları",
-                "SQL",
-                "NoSQL",
-                "API Geliştirme",
-                "Mikroservisler",
-                "Agile & Scrum",
-                "Yazılım Testi",
-                "Unit Test",
-                "Clean Code",
-                "Design Patterns",
-                "OOP",
-                "Functional Programming",
-                "Versiyon Kontrol (Git)",
-                "Linux & Sistem Programlama"
-        ));
-
 
         // Kartları map'e ekle, eğer global map'te yoksa false olarak ekle
-        for (String etkt : etiketlerList) {
+        for (String etkt : EtiketlerList.LIST) {
             if (!secimDurumuGlobal.containsKey(etkt)) secimDurumuGlobal.put(etkt, false);
         }
 
@@ -122,9 +70,9 @@ public class BlogEkle extends AppCompatActivity {
 
             for (int i = 0; i < getIntent().getStringExtra("blog_etiketler").split(",").length; i++) {
                 Log.d("etiket", getIntent().getStringExtra("blog_etiketler").split(",")[i]);
-                secimDurumuGlobal.put(etiketlerList.get(i), false);
+                secimDurumuGlobal.put(EtiketlerList.LIST.get(i), false);
                 if (getIntent().getStringExtra("blog_etiketler").split(",")[i].equals("1")) {
-                    secimDurumuGlobal.put(etiketlerList.get(i), true);
+                    secimDurumuGlobal.put(EtiketlerList.LIST.get(i), true);
                 }
             }
         }
@@ -152,11 +100,11 @@ public class BlogEkle extends AppCompatActivity {
                 recyclerEtiketler.setLayoutManager(new LinearLayoutManager(BlogEkle.this));
 
                 // Map başlangıçta false değerlerle dolsun
-                for (String e : etiketlerList) {
+                for (String e : EtiketlerList.LIST) {
                     secimDurumuGlobal.putIfAbsent(e, false);
                 }
 
-                EtiketAdapter adapter = new EtiketAdapter(etiketlerList, secimDurumuGlobal);
+                EtiketAdapter adapter = new EtiketAdapter(EtiketlerList.LIST, secimDurumuGlobal);
                 recyclerEtiketler.setAdapter(adapter);
 
             }

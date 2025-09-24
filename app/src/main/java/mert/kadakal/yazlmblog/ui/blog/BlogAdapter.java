@@ -54,60 +54,9 @@ public class BlogAdapter extends ArrayAdapter<Blog> {
         textBaslik.setText(blog.getBaslik());
         textMetin.setText(blog.getMetin().substring(0,300)+"...");
 
-        ArrayList<String> etiketlerList = new ArrayList<>(List.of(
-                "Yazılım Dilleri",
-                "Oyun Geliştirme",
-                "Web Geliştirme",
-                "Eğitim",
-                "Java",
-                "Python",
-                "C++",
-                "C#",
-                "JavaScript",
-                "Kotlin",
-                "Swift",
-                "Go",
-                "Rust",
-                "PHP",
-                "Ruby",
-                "TypeScript",
-                "Dart",
-                "R",
-                "Scala",
-                "Perl",
-                "HTML & CSS",
-                "Veri Yapıları",
-                "Algoritmalar",
-                "Yapay Zeka",
-                "Makine Öğrenmesi",
-                "Derin Öğrenme",
-                "Veri Bilimi",
-                "Siber Güvenlik",
-                "Blockchain",
-                "Mobil Geliştirme",
-                "Backend Geliştirme",
-                "Frontend Geliştirme",
-                "Fullstack Geliştirme",
-                "Bulut Bilişim",
-                "DevOps",
-                "Veritabanları",
-                "SQL",
-                "NoSQL",
-                "API Geliştirme",
-                "Mikroservisler",
-                "Agile & Scrum",
-                "Yazılım Testi",
-                "Unit Test",
-                "Clean Code",
-                "Design Patterns",
-                "OOP",
-                "Functional Programming",
-                "Versiyon Kontrol (Git)",
-                "Linux & Sistem Programlama"
-        ));
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < blog.getEtiketler().split(",").length; i++) {
-            sb.append(blog.getEtiketler().split(",")[i].equals("1") ? etiketlerList.get(i) + ", " : "");
+            sb.append(blog.getEtiketler().split(",")[i].equals("1") ? EtiketlerList.LIST.get(i) + ", " : "");
         }
         if (sb.length() > 0) {
             sb.setLength(sb.length() - 2);

@@ -116,10 +116,6 @@ public class NotificationsFragment extends Fragment {
     private final List<AlertDialog> acikDialoglar = new ArrayList<>();
     private static final int IMAGE_REQUEST = 1;
     private Uri imageUri;
-
-
-
-
     ListView listView;
     ArrayList<Blog> blogList;
     BlogAdapter adapter;
@@ -407,24 +403,17 @@ public class NotificationsFragment extends Fragment {
 
 
                                                 }
-
-
-
                                                 // Dialogları kapat
                                                 dialog.dismiss();
                                                 dialog2.dismiss();
                                             })
                                     );dialog2.show();
-
                                 } else {
                                     dialog.dismiss();
                                 }
                             })
                     );
-
                     dialog.show(); // sadece 1 kez çağrılıyor
-
-
                     break;
                 }
             }
@@ -491,52 +480,46 @@ public class NotificationsFragment extends Fragment {
                             Toast.makeText(getContext(), "Favori bloglar yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
                         }
                     });
-
-                    break; // Kullanıcı bulundu, döngüden çık
+                    break;
                 }
             }
         }));
 
-
-
         pp = view.findViewById(R.id.pp);
-        pp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference("uploads/");
-                StorageReference fileRef = storageRef.child(String.valueOf(sharedPreferences.getInt("userid", -1)));
+        pp.setOnClickListener(view -> {
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference("uploads/");
+            StorageReference fileRef = storageRef.child(String.valueOf(sharedPreferences.getInt("userid", -1)));
 
-                fileRef.getMetadata()
-                        .addOnSuccessListener(metadata -> {
-                            String[] options = new String[]{"Kaldır", "Değiştir"};
-                            new AlertDialog.Builder(getContext())
-                                    .setTitle("Ne yapmak istiyorsunuz?")
-                                    .setItems(options, (dialog, which) -> {
-                                        if (which == 0) { //kaldır
-                                            StorageReference fileRef2 = storageRef.child(String.valueOf(sharedPreferences.getInt("userid", -1)));
-                                            fileRef2.delete()
-                                                    .addOnSuccessListener(aVoid -> {
-                                                        Toast.makeText(getContext(), "Profil resmi kaldırıldı", Toast.LENGTH_SHORT).show();
-                                                        pp.setImageResource(R.drawable.hesap);
-                                                        ekranGuncelle(sharedPreferences.getInt("userid", -1));
-                                                    })
-                                                    .addOnFailureListener(e -> {
-                                                        Toast.makeText(getContext(), "Profil resmi kaldırılırken hata oluştu", Toast.LENGTH_SHORT).show();
-                                                    });
-                                        } else if (which == 1) {
-                                            openFileChooser();
-                                        }
-                                    })
-                                    .show();
-                        })
-                        .addOnFailureListener(e -> {
-                            if (e instanceof StorageException && ((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND) {
-                                openFileChooser();
-                            } else {
-                                Log.e("STORAGE", "Kontrol sırasında hata: " + e.getMessage());
-                            }
-                        });
-            }
+            fileRef.getMetadata()
+                    .addOnSuccessListener(metadata -> {
+                        String[] options = new String[]{"Kaldır", "Değiştir"};
+                        new AlertDialog.Builder(getContext())
+                                .setTitle("Ne yapmak istiyorsunuz?")
+                                .setItems(options, (dialog, which) -> {
+                                    if (which == 0) { //kaldır
+                                        StorageReference fileRef2 = storageRef.child(String.valueOf(sharedPreferences.getInt("userid", -1)));
+                                        fileRef2.delete()
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Toast.makeText(getContext(), "Profil resmi kaldırıldı", Toast.LENGTH_SHORT).show();
+                                                    pp.setImageResource(R.drawable.hesap);
+                                                    ekranGuncelle(sharedPreferences.getInt("userid", -1));
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(getContext(), "Profil resmi kaldırılırken hata oluştu", Toast.LENGTH_SHORT).show();
+                                                });
+                                    } else if (which == 1) {
+                                        openFileChooser();
+                                    }
+                                })
+                                .show();
+                    })
+                    .addOnFailureListener(e -> {
+                        if (e instanceof StorageException && ((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND) {
+                            openFileChooser();
+                        } else {
+                            Log.e("STORAGE", "Kontrol sırasında hata: " + e.getMessage());
+                        }
+                    });
         });
 
         if (sharedPreferences.getInt("userid",-1) != -1) {
@@ -935,6 +918,7 @@ public class NotificationsFragment extends Fragment {
                     getKullanicilar(kullanicilar -> {
                         boolean find = false;
                         for (Kullanici k : kullanicilar) {
+                            Log.d("a", k.getKullanici_adi());
                             Toast.makeText(getContext(), k.getKullanici_adi(), Toast.LENGTH_SHORT).show();
                             if (k.getKullanici_adi().equals(isim)) {
                                 if (k.getParola().equals(parola)) {
@@ -1018,23 +1002,6 @@ public class NotificationsFragment extends Fragment {
         });
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private void openFileChooser() {
         Intent intent = new Intent();
@@ -1122,8 +1089,4 @@ public class NotificationsFragment extends Fragment {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
-
-
-
-
 }

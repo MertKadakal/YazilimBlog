@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -93,66 +95,24 @@ public class HomeFragment extends Fragment {
         });
 
         if (sharedPreferences.getInt("userid", -1) <= 0) blog_ekle.setVisibility(View.GONE);
-        blog_ekle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        blog_ekle.setOnClickListener(view -> {
+            ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+            if (activeNetwork != null && activeNetwork.isConnected()) {
+                // İnternet varsa
                 Intent intent = new Intent(getContext(), BlogEkle.class);
                 intent.putExtra("blog_ekle_duzenle", "ekle");
                 startActivity(intent);
+            } else {
+                // İnternet yoksa uyarı ver
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Bağlantı Hatası")
+                        .setMessage("Çıkış yapabilmek için internet bağlantınız olmalı.")
+                        .setPositiveButton("Tamam", (d, w) -> d.dismiss())
+                        .show();
             }
         });
-
-        ArrayList<String> etiketlerList = new ArrayList<>(List.of(
-                "Yazılım Dilleri",
-                "Oyun Geliştirme",
-                "Web Geliştirme",
-                "Eğitim",
-                "Java",
-                "Python",
-                "C++",
-                "C#",
-                "JavaScript",
-                "Kotlin",
-                "Swift",
-                "Go",
-                "Rust",
-                "PHP",
-                "Ruby",
-                "TypeScript",
-                "Dart",
-                "R",
-                "Scala",
-                "Perl",
-                "HTML & CSS",
-                "Veri Yapıları",
-                "Algoritmalar",
-                "Yapay Zeka",
-                "Makine Öğrenmesi",
-                "Derin Öğrenme",
-                "Veri Bilimi",
-                "Siber Güvenlik",
-                "Blockchain",
-                "Mobil Geliştirme",
-                "Backend Geliştirme",
-                "Frontend Geliştirme",
-                "Fullstack Geliştirme",
-                "Bulut Bilişim",
-                "DevOps",
-                "Veritabanları",
-                "SQL",
-                "NoSQL",
-                "API Geliştirme",
-                "Mikroservisler",
-                "Agile & Scrum",
-                "Yazılım Testi",
-                "Unit Test",
-                "Clean Code",
-                "Design Patterns",
-                "OOP",
-                "Functional Programming",
-                "Versiyon Kontrol (Git)",
-                "Linux & Sistem Programlama"
-        ));
 
         filtrele.setOnClickListener(view -> {
             LayoutInflater inflater1 = LayoutInflater.from(getContext());
@@ -171,10 +131,10 @@ public class HomeFragment extends Fragment {
 
             Map<String, Boolean> secimDurumuGlobal = new LinkedHashMap<>();
             for (int i = 0; i < 49; i++) {
-                secimDurumuGlobal.put(etiketlerList.get(i), false);
+                secimDurumuGlobal.put(EtiketlerList.LIST.get(i), false);
             }
 
-            EtiketAdapter adapter = new EtiketAdapter(etiketlerList, secimDurumuGlobal);
+            EtiketAdapter adapter = new EtiketAdapter(EtiketlerList.LIST, secimDurumuGlobal);
             recyclerEtiketler.setAdapter(adapter);
 
             filtrele.setOnClickListener(new View.OnClickListener() {
