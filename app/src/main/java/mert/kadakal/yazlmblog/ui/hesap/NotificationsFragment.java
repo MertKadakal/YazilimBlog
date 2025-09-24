@@ -919,7 +919,6 @@ public class NotificationsFragment extends Fragment {
                         boolean find = false;
                         for (Kullanici k : kullanicilar) {
                             Log.d("a", k.getKullanici_adi());
-                            Toast.makeText(getContext(), k.getKullanici_adi(), Toast.LENGTH_SHORT).show();
                             if (k.getKullanici_adi().equals(isim)) {
                                 if (k.getParola().equals(parola)) {
                                     editor.putInt("userid", k.getId()).apply();

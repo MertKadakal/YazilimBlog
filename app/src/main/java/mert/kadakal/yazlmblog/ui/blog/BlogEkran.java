@@ -203,7 +203,6 @@ public class BlogEkran extends AppCompatActivity {
 
                                                 Intent intent = new Intent(BlogEkran.this, Blogger.class);
                                                 intent.putExtra("blogger_id", blogger_id);
-                                                Toast.makeText(BlogEkran.this, "Blogger ID: " + blogger_id, Toast.LENGTH_SHORT).show();
                                                 startActivity(intent);
                                             });
                                         }
