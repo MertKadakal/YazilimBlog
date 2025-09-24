@@ -41,9 +41,9 @@ Kullanıcılar blog yazılarını görüntüleyebilir, diğer kullanıcıların 
 ---
 
 ## 📸 Ekran Görüntüleri
-| Ana Sayfa | Blog Detay | Navigasyon |
-|-----------|------------|-------------|
-| ![Ana Sayfa](screenshots/home.png) | ![Blog Detay](screenshots/detail.png) | ![Navigasyon](screenshots/nav.png) |
+| Ana Sayfa | Blog | Navigasyon | Hesap | Popüler | Yorum |
+|-----------|------------|-------------|-----------|------------|-------------|
+| ![Ana Sayfa](images/anasayfa.png) | ![Blog Detay](images/blog.png) | ![Navigasyon](images/yanmenu.png) | ![Ana Sayfa](images/hesap.png) | ![Blog Detay](images/populer.png) | ![Navigasyon](images/yorum.png) |
 
 ---
 
