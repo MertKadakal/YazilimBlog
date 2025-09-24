@@ -3,6 +3,9 @@
 [![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)]()
 [![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)]()
 [![.NET](https://img.shields.io/badge/.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)]()
+[![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white)]()
+[![XML](https://img.shields.io/badge/XML-0060B0?style=for-the-badge&logo=xml&logoColor=white)]()
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)]()
 [![AWS EC2](https://img.shields.io/badge/AWS%20EC2-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)]()
 [![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)]()
 
@@ -32,7 +35,8 @@ Kullanıcılar blog yazılarını görüntüleyebilir, diğer kullanıcıların 
 - **Firebase Storage** – Görsel yükleme ve depolama  
 - **Retrofit** – REST API istemcisi  
 - **Glide** – Görsel yükleme kütüphanesi  
-- **Java** – Android uygulama geliştirme dili  
+- **Java** – Android uygulama geliştirme dili
+- **C#** - .NET proje geliştirme dili
 - **.NET Core / ASP.NET** – REST API geliştirme  
 - **AWS EC2** – Sunucu üzerinde daimi çalışan backend  
 - **Nginx / IIS (opsiyonel)** – Servis yönetimi  
@@ -41,10 +45,13 @@ Kullanıcılar blog yazılarını görüntüleyebilir, diğer kullanıcıların 
 ---
 
 ## 📸 Ekran Görüntüleri
-| Ana Sayfa | Blog Detay | Navigasyon |
+| Ana Sayfa | Blog | Navigasyon |
 |-----------|------------|-------------|
-| ![Ana Sayfa](screenshots/home.png) | ![Blog Detay](screenshots/detail.png) | ![Navigasyon](screenshots/nav.png) |
+| ![Ana Sayfa](images/anasayfa.png) | ![Blog Detay](images/blog.png) | ![Navigasyon](images/yanmenu.png) |
 
+| Hesap | Popüler | Yorum |
+|-----------|------------|-------------|
+| ![Ana Sayfa](images/hesap.png) | ![Blog Detay](images/populer.png) | ![Navigasyon](images/yorum.png) |
 ---
 
 ## KVKK Metni
