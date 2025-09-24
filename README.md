@@ -44,7 +44,7 @@ Kullanıcılar blog yazılarını görüntüleyebilir, diğer kullanıcıların 
 
 ---
 
-## 📸 Ekran Görüntüleri
+## 📸 Uygulamadan Görüntüler
 | Ana Sayfa | Blog | Navigasyon |
 |-----------|------------|-------------|
 | ![Ana Sayfa](images/anasayfa.png) | ![Blog Detay](images/blog.png) | ![Navigasyon](images/yanmenu.png) |
@@ -52,6 +52,14 @@ Kullanıcılar blog yazılarını görüntüleyebilir, diğer kullanıcıların 
 | Hesap | Popüler | Yorum |
 |-----------|------------|-------------|
 | ![Ana Sayfa](images/hesap.png) | ![Blog Detay](images/populer.png) | ![Navigasyon](images/yorum.png) |
+
+---
+
+## Sunucu Tarafı .NET Servisi Durumu ve MySql Veritabanı Yapısı
+| .NET Servisi | MySql Veritabanı Tabloları |
+|-----------|------------|
+| ![Ana Sayfa](images/api.png) | ![Blog Detay](images/tables.png) |
+
 ---
 
 ## KVKK Metni
