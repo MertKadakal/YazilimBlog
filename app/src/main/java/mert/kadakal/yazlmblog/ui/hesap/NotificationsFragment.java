@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.content.DialogInterface;
@@ -13,6 +14,7 @@ import android.content.ContentResolver;
 import android.webkit.MimeTypeMap;
 
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.storage.StorageException;
 import com.yalantis.ucrop.UCrop;
 
@@ -181,24 +183,77 @@ public class NotificationsFragment extends Fragment {
                     EditText isim = new EditText(requireContext());
                     isim.setInputType(InputType.TYPE_CLASS_TEXT);
                     isim.setText(hesap_ismi.getText());
+                    isim.setFilters(new InputFilter[]{
+                            new InputFilter.LengthFilter(15) // Maksimum 10 karakter
+                    });
 
 // Mail
-                    TextView labelMail = new TextView(requireContext());
-                    labelMail.setText("Mail Adresi");
+                    TextView labelMail = new TextView(requireContext()); labelMail.setText("Mail Adresi");
+                    LinearLayout mailLayout = new LinearLayout(requireContext());
+                    mailLayout.setOrientation(LinearLayout.HORIZONTAL);
+
                     EditText mail = new EditText(requireContext());
                     mail.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-                    mail.setText(k.getMail() == null ? "" : k.getMail()); // Kullanıcıdan çekilen mail
+                    mail.setHint(k.getMail() == null ? "Kaydedilmemiş" : "");
+                    mail.setText(k.getMail() == null ? "" : k.getMail());
+
+                    LinearLayout.LayoutParams mailParams =
+                            new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+                    mail.setLayoutParams(mailParams);
+
+                    Button resetMail = new Button(requireContext());
+
+                    GradientDrawable bg = new GradientDrawable();
+                    bg.setShape(GradientDrawable.OVAL);
+                    bg.setColor(Color.rgb(130,0,0)); // Arkaplan rengi
+                    resetMail.setBackground(bg);
+
+                    LinearLayout.LayoutParams btnParams =
+                            new LinearLayout.LayoutParams(90, 90); // dp’ye çevirmek için TypedValue kullanabilirsin
+                    btnParams.setMargins(16, 0, 0, 0); // soldan biraz boşluk
+                    resetMail.setLayoutParams(btnParams);
+
+                    resetMail.setOnClickListener(rst -> {
+                        mail.setText("");
+                        mail.setHint("Kaydedilmemiş");
+                    });
+                    mailLayout.addView(mail);
+                    mailLayout.addView(resetMail);
+
 
 // Telefon
                     TextView labelTelefon = new TextView(requireContext());
+                    LinearLayout telLayout = new LinearLayout(requireContext());
+                    telLayout.setOrientation(LinearLayout.HORIZONTAL);
+
                     labelTelefon.setText("Telefon Numarası");
                     EditText telefon = new EditText(requireContext());
                     telefon.setInputType(InputType.TYPE_CLASS_PHONE);
+                    telefon.setHint(k.getTel() == null ? "5000000000" : "");
                     telefon.setText(k.getTel() == null ? "" : k.getTel()); // Kullanıcıdan çekilen telefon
+                    telefon.setFilters(new InputFilter[]{
+                            new InputFilter.LengthFilter(10) // Maksimum 10 karakter
+                    });
+                    LinearLayout.LayoutParams telefonParams =
+                            new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+                    telefon.setLayoutParams(telefonParams);
+
+                    Button resetTel = new Button(requireContext());
+
+                    resetTel.setBackground(bg);
+                    resetTel.setLayoutParams(btnParams);
+
+                    resetTel.setOnClickListener(rst -> {
+                        telefon.setText("");
+                        telefon.setHint("5000000000");
+                    });
+
+                    telLayout.addView(telefon);
+                    telLayout.addView(resetTel);
 
 // Parola değiştir
                     TextView labelParola = new TextView(requireContext());
-                    labelParola.setText("Parola");
+                    labelParola.setText("Parola (Minimum 6 karakter)");
                     EditText parola = new EditText(requireContext());
                     parola.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     parola.setHint("Yeni Parola");
@@ -207,9 +262,9 @@ public class NotificationsFragment extends Fragment {
                     container2.addView(labelIsim);
                     container2.addView(isim);
                     container2.addView(labelMail);
-                    container2.addView(mail);
+                    container2.addView(mailLayout);
                     container2.addView(labelTelefon);
-                    container2.addView(telefon);
+                    container2.addView(telLayout);
                     container2.addView(labelParola);
                     container2.addView(parola);
 
@@ -244,8 +299,8 @@ public class NotificationsFragment extends Fragment {
 
                                 // Eğer değişiklik varsa
                                 if ((!Objects.equals(k.getKullanici_adi(), yeniIsim) && !yeniIsim.isEmpty())
-                                        || (!Objects.equals(k.getMail(), yeniMail) && !yeniMail.isEmpty())
-                                        || (!Objects.equals(k.getTel(), yeniTelefon) && !yeniTelefon.isEmpty())
+                                        || (!Objects.equals(k.getMail(), yeniMail))
+                                        || (!Objects.equals(k.getTel(), yeniTelefon))
                                         || (!Objects.equals(k.getParola(), yeniParola) && !yeniParola.isEmpty())) {
 
                                     AlertDialog dialog2 = new AlertDialog.Builder(requireContext())
@@ -254,155 +309,143 @@ public class NotificationsFragment extends Fragment {
                                             .setNegativeButton("İptal", (d, w) -> d.dismiss())
                                             .create();
 
-
-
                                     dialog2.setOnShowListener(dlg2 ->
                                             dialog2.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v3 -> {
-                                                Log.d("aa", "ss");
-
                                                 for (Kullanici k2 : kullanicilar) {
                                                     if (k2.getId() != k.getId()) {
                                                         if (Objects.equals(k2.getKullanici_adi(), yeniIsim)) {
                                                             Toast.makeText(getContext(), "Bu isim kullanılıyor", Toast.LENGTH_SHORT).show();
+                                                            dialog2.dismiss();
+                                                            return; // Burada bitiriyoruz
+                                                        }
+                                                        if (yeniIsim.isEmpty()) {
+                                                            Toast.makeText(getContext(), "İsim boş bırakılamaz", Toast.LENGTH_SHORT).show();
+                                                            dialog2.dismiss();
                                                             return; // Burada bitiriyoruz
                                                         }
                                                         if (Objects.equals(k2.getMail(), yeniMail)) {
                                                             Toast.makeText(getContext(), "Bu mail kullanılıyor", Toast.LENGTH_SHORT).show();
+                                                            dialog2.dismiss();
                                                             return;
                                                         }
                                                         if (Objects.equals(k2.getTel(), yeniTelefon)) {
                                                             Toast.makeText(getContext(), "Bu telefon kullanılıyor", Toast.LENGTH_SHORT).show();
+                                                            dialog2.dismiss();
+                                                            return;
+                                                        }
+                                                        if ((yeniTelefon.length() < 10 && !yeniTelefon.isEmpty()) || yeniTelefon.contains(" ") || (!yeniTelefon.isEmpty() && yeniTelefon.charAt(0) == '0')) {
+                                                            Toast.makeText(getContext(), "Telefon numarası yanlış girildi", Toast.LENGTH_SHORT).show();
+                                                            dialog2.dismiss();
+                                                            return;
+                                                        }
+                                                        if (!yeniParola.isEmpty() && yeniParola.length() < 6) {
+                                                            Toast.makeText(getContext(), "Parola 6 karakterden kısa olamaz", Toast.LENGTH_SHORT).show();
+                                                            dialog2.dismiss();
                                                             return;
                                                         }
                                                     }
                                                 }
 
+                                                //kullanıcı adı güncelleme
+                                                if (!Objects.equals(k.getKullanici_adi(), yeniIsim) && !yeniIsim.isEmpty()) {
+                                                    Kullanici yeniKullanici = new Kullanici();
+                                                    kullaniciOlustur(yeniKullanici, k);
+                                                    yeniKullanici.setKullanici_adi(yeniIsim);
+                                                    kullaniciGuncelleApi(yeniKullanici, dialog2);
+                                                }
+
                                                 //mail yenilenmişse onay işlemi
-                                                if (!Objects.equals(k.getMail(), yeniMail) && !yeniMail.isEmpty()) {
-                                                    // Eğer buraya geldiyse hiçbir çakışma yok, kod gönder
-                                                    sharedPreferences.edit().putBoolean("mail_guncelle", true).apply();
-                                                    kodGonder(yeniMail);
+                                                if (!Objects.equals(k.getMail(), yeniMail)) {
+                                                    if (!yeniMail.isEmpty()) {
+                                                        // Eğer buraya geldiyse hiçbir çakışma yok, kod gönder
+                                                        sharedPreferences.edit().putBoolean("mail_guncelle", true).apply();
+                                                        kodGonder(yeniMail);
 
-                                                    Handler handler = new Handler(Looper.getMainLooper());
-                                                    handler.postDelayed(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            if (!sharedPreferences.getBoolean("mail_guncelle", false)) {
-                                                                Kullanici yeniKullanici = new Kullanici();
-                                                                yeniKullanici.setId(k.getId());
-                                                                yeniKullanici.setKayit_yontem(k.getKayit_yontem());
-                                                                yeniKullanici.setKullanici_adi(k.getKullanici_adi());
-                                                                yeniKullanici.setKayit_tarihi(k.getKayit_tarihi());
-                                                                yeniKullanici.setMail(yeniMail);
-                                                                yeniKullanici.setTel(k.getTel());
-                                                                yeniKullanici.setParola(k.getParola());
-                                                                yeniKullanici.setFavoriler(k.getFavoriler());
-
-                                                                Call<Kullanici> call = apiService.updateKullanici(yeniKullanici);
-                                                                call.enqueue(new Callback<Kullanici>() {
-                                                                    @Override
-                                                                    public void onResponse(Call<Kullanici> call, Response<Kullanici> response) {
-                                                                        if (response.isSuccessful()) {
-                                                                            Toast.makeText(getContext(), "Mailiniz güncellendi", Toast.LENGTH_SHORT).show();
-                                                                            ekranGuncelle(response.body().getId());
-                                                                        } else {
-                                                                            Toast.makeText(getContext(), "Güncelleme esnasında hata oluştu", Toast.LENGTH_SHORT).show();
-                                                                            try {
-                                                                                String errorJson = response.errorBody().string(); // errorBody string olarak al
-                                                                                Log.e("API", "Hata: " + response.code() + " - " + errorJson);
-                                                                            } catch (Exception e) {
-                                                                                Log.e("API", "Hata body okunamadı", e);
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                    @Override
-                                                                    public void onFailure(Call<Kullanici> call, Throwable t) {
-                                                                        Log.e("API", "İstek başarısız: " + t.getMessage());
-                                                                    }
-                                                                });
-                                                            } else {
-                                                                handler.postDelayed(this, 100); // 100 ms sonra tekrar kontrol
-                                                            }
-                                                        }
-                                                    }, 100);
-                                                }
-
-                                                if (!Objects.equals(k.getTel(), yeniTelefon) && !yeniTelefon.isEmpty()) {
-                                                    EditText kod = new EditText(requireContext());
-                                                    kod.setInputType(InputType.TYPE_CLASS_TEXT);
-                                                    kod.setHint("Kod");
-
-                                                    LinearLayout container_telkod = new LinearLayout(requireContext());
-                                                    container_telkod.setOrientation(LinearLayout.VERTICAL);
-                                                    container_telkod.setPadding(margin, margin, margin, margin);
-                                                    container_telkod.addView(kod);
-
-                                                    AlertDialog dialog3 = new AlertDialog.Builder(requireContext())
-                                                            .setMessage("Telefonunuza gelen 4 haneli kodu giriniz")
-                                                            .setView(container_telkod)
-                                                            .setPositiveButton("Tamam", null)
-                                                            .setNegativeButton("İptal", (d, w) -> d.dismiss())
-                                                            .create();
-
-                                                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-                                                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.SEND_SMS}, 1);
-                                                    }
-
-                                                    Random random = new Random();
-                                                    int tel_kod = random.nextInt(9000)+1000;
-                                                    String phoneNumber = yeniTelefon;
-                                                    String message = "Yazılım Blog telefon doğrulama kodunuz: "+tel_kod;
-
-                                                    try {
-                                                        SmsManager smsManager = SmsManager.getDefault();
-                                                        smsManager.sendTextMessage(phoneNumber, null, message, null, null);
-                                                    } catch (Exception e) {
-                                                        Toast.makeText(getContext(), "SMS gönderilemedi", Toast.LENGTH_SHORT).show();
-                                                        e.printStackTrace();
-                                                    }
-
-                                                    dialog3.setOnShowListener(dlg3 ->
-                                                            dialog3.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v4 -> {
-
-                                                                if (kod.getText().equals(tel_kod)) {
+                                                        Handler handler = new Handler(Looper.getMainLooper());
+                                                        handler.postDelayed(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                if (!sharedPreferences.getBoolean("mail_guncelle", false)) {
                                                                     Kullanici yeniKullanici = new Kullanici();
-                                                                    yeniKullanici.setId(k.getId());
-                                                                    yeniKullanici.setKayit_yontem(k.getKayit_yontem());
-                                                                    yeniKullanici.setKullanici_adi(k.getKullanici_adi());
-                                                                    yeniKullanici.setKayit_tarihi(k.getKayit_tarihi());
-                                                                    yeniKullanici.setMail(k.getMail());
-                                                                    yeniKullanici.setTel(telefon.getText().toString());
-                                                                    yeniKullanici.setParola(k.getParola());
-                                                                    yeniKullanici.setFavoriler(k.getFavoriler());
-
-                                                                    Call<Kullanici> call = apiService.updateKullanici(yeniKullanici);
-                                                                    call.enqueue(new Callback<Kullanici>() {
-                                                                        @Override
-                                                                        public void onResponse(Call<Kullanici> call, Response<Kullanici> response) {
-                                                                            if (response.isSuccessful()) {
-                                                                                Toast.makeText(getContext(), "Telefon numaranız güncellendi", Toast.LENGTH_SHORT).show();
-                                                                                ekranGuncelle(response.body().getId());
-                                                                            } else {
-                                                                                Toast.makeText(getContext(), "Telefon Güncelleme esnasında hata oluştu", Toast.LENGTH_SHORT).show();
-                                                                                try {
-                                                                                    String errorJson = response.errorBody().string(); // errorBody string olarak al
-                                                                                    Log.e("API", "Hata: " + response.code() + " - " + errorJson);
-                                                                                } catch (Exception e) {
-                                                                                    Log.e("API", "Hata body okunamadı", e);
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                        @Override
-                                                                        public void onFailure(Call<Kullanici> call, Throwable t) {
-                                                                            Log.e("API", "İstek başarısız: " + t.getMessage());
-                                                                        }
-                                                                    });
+                                                                    kullaniciOlustur(yeniKullanici, k);
+                                                                    yeniKullanici.setMail(yeniMail);
+                                                                    kullaniciGuncelleApi(yeniKullanici, null);
+                                                                } else {
+                                                                    handler.postDelayed(this, 100); // 100 ms sonra tekrar kontrol
                                                                 }
-
-                                                            }));dialog3.show();
-
-
+                                                            }
+                                                        }, 100);
+                                                    } else {
+                                                        Kullanici yeniKullanici = new Kullanici();
+                                                        kullaniciOlustur(yeniKullanici, k);
+                                                        yeniKullanici.setMail(null);
+                                                        kullaniciGuncelleApi(yeniKullanici, null);
+                                                    }
                                                 }
+
+                                                //telefon yenilemesi
+                                                if (!Objects.equals(k.getTel(), yeniTelefon)) {
+                                                    if (!yeniTelefon.isEmpty()) {
+                                                        EditText kod = new EditText(requireContext());
+                                                        kod.setInputType(InputType.TYPE_CLASS_TEXT);
+                                                        kod.setHint("Kod");
+
+                                                        LinearLayout container_telkod = new LinearLayout(requireContext());
+                                                        container_telkod.setOrientation(LinearLayout.VERTICAL);
+                                                        container_telkod.setPadding(margin, margin, margin, margin);
+                                                        container_telkod.addView(kod);
+
+                                                        AlertDialog dialog3 = new AlertDialog.Builder(requireContext())
+                                                                .setMessage("Telefonunuza gelen 4 haneli kodu giriniz")
+                                                                .setView(container_telkod)
+                                                                .setPositiveButton("Tamam", null)
+                                                                .setNegativeButton("İptal", (d, w) -> d.dismiss())
+                                                                .create();
+
+                                                        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                                                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.SEND_SMS}, 1);
+                                                        }
+
+                                                        Random random = new Random();
+                                                        int tel_kod = random.nextInt(9000)+1000;
+                                                        String phoneNumber = yeniTelefon;
+                                                        String message = "Yazılım Blog telefon doğrulama kodunuz: "+tel_kod;
+
+                                                        try {
+                                                            SmsManager smsManager = SmsManager.getDefault();
+                                                            smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+                                                        } catch (Exception e) {
+                                                            Toast.makeText(getContext(), "SMS gönderilemedi", Toast.LENGTH_SHORT).show();
+                                                            e.printStackTrace();
+                                                        }
+
+                                                        dialog3.setOnShowListener(dlg3 ->
+                                                                dialog3.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v4 -> {
+
+                                                                    if (kod.getText().toString().equals(String.valueOf(tel_kod))) {
+                                                                        Kullanici yeniKullanici = new Kullanici();
+                                                                        kullaniciOlustur(yeniKullanici, k);
+                                                                        yeniKullanici.setTel(telefon.getText().toString());
+                                                                        kullaniciGuncelleApi(yeniKullanici, null);
+                                                                    }
+
+                                                                }));dialog3.show();
+                                                    } else {
+                                                        Kullanici yeniKullanici = new Kullanici();
+                                                        kullaniciOlustur(yeniKullanici, k);
+                                                        yeniKullanici.setTel(null);
+                                                        kullaniciGuncelleApi(yeniKullanici, null);
+                                                    }
+                                                }
+
+                                                //parola güncelleme
+                                                if (!Objects.equals(k.getParola(), yeniParola) && !yeniParola.isEmpty()) {
+                                                    Kullanici yeniKullanici = new Kullanici();
+                                                    kullaniciOlustur(yeniKullanici, k);
+                                                    yeniKullanici.setParola(yeniParola);
+                                                    kullaniciGuncelleApi(yeniKullanici, null);
+                                                }
+
                                                 // Dialogları kapat
                                                 dialog.dismiss();
                                                 dialog2.dismiss();
@@ -537,6 +580,43 @@ public class NotificationsFragment extends Fragment {
         ekranGuncelle(userid);
 
         return view;
+    }
+
+    private void kullaniciOlustur(Kullanici yeniKullanici, Kullanici k) {
+        yeniKullanici.setId(k.getId());
+        yeniKullanici.setKayit_yontem(k.getKayit_yontem());
+        yeniKullanici.setKullanici_adi(k.getKullanici_adi());
+        yeniKullanici.setKayit_tarihi(k.getKayit_tarihi());
+        yeniKullanici.setMail(k.getMail());
+        yeniKullanici.setTel(k.getTel());
+        yeniKullanici.setParola(k.getParola());
+        yeniKullanici.setFavoriler(k.getFavoriler());
+    }
+
+    private void kullaniciGuncelleApi(Kullanici yeniKullanici, AlertDialog dialog) {
+        Call<Kullanici> call = apiService.updateKullanici(yeniKullanici);
+        call.enqueue(new Callback<Kullanici>() {
+            @Override
+            public void onResponse(Call<Kullanici> call, Response<Kullanici> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Bilgileriniz güncellendi", Toast.LENGTH_SHORT).show();
+                    if (dialog != null) dialog.dismiss();
+                    ekranGuncelle(response.body().getId());
+                } else {
+                    Toast.makeText(getContext(), "Güncelleme esnasında hata oluştu", Toast.LENGTH_SHORT).show();
+                    try {
+                        String errorJson = response.errorBody().string(); // errorBody string olarak al
+                        Log.e("API", "Hata: " + response.code() + " - " + errorJson);
+                    } catch (Exception e) {
+                        Log.e("API", "Hata body okunamadı", e);
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<Kullanici> call, Throwable t) {
+                Log.e("API", "İstek başarısız: " + t.getMessage());
+            }
+        });
     }
 
     private void ekranGuncelle(int userid) {
