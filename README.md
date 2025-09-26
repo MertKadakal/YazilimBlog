@@ -224,3 +224,11 @@ haklarına sahiptir.
 7. Başvuru Yöntemi  
 Haklarınızı kullanmak için taleplerinizi mert.kadakal1629@gmail.com üzerinden iletebilirsiniz.
 
+---
+
+## Proje APK Dosyası
+
+Bu dosyayı telefonunuza indirip uygulamayı çalıştırabilirsiniz.
+
+https://drive.google.com/file/d/10ZqZCmsy2p7Ocg2CkcDEz3roCewdFCLo/view?usp=sharing
+
